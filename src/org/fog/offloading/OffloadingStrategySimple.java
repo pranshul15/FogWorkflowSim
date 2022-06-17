@@ -15,7 +15,7 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 	
 	double LAN_Bandwidth = 100;//Mbps
 	double WAN_Bandwidth = 40;//Mbps
-	final double parameter = 10000;//计算传输数据的传输时间的调整参数
+	final double parameter = 10000;//Tuning parameters for calculating the transmission time of the transmitted data
 	double deadline;
 	private HashMap<String, List<Integer>> fileToDatacenter;
 	private static FogLinearPowerModel powerModel;
@@ -38,17 +38,17 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 		powerModel = (FogLinearPowerModel) getmobile().getHost().getPowerModel();
 		
 		for(FogDevice fd: getFogDeviceLists()){
-			if(fd.getName().equalsIgnoreCase("cloud")){ //计算卸载到云所需时间
+			if(fd.getName().equalsIgnoreCase("cloud")){ //Calculate the time required for offloading to the cloud
 				time1 = job.getCloudletLength() / fd.getAverageMips()
 						                  + getJobFileSize(job) / parameter / WAN_Bandwidth;
-				//卸载所需能耗 = 空闲功率 * 云执行时间 + 传输功率 * (发送数据大小 + 接收数据大小 ) / WAN带宽
+				//Energy consumption required for unloading = idle power * Cloud execution time + Transmission power * (send data size + received data size ) / WANbandwidth
 				energy1 = powerModel.getStaticPower() * job.getCloudletLength() / fd.getAverageMips()
 						     + powerModel.getSendPower() * getJobFileSize(job) / parameter / WAN_Bandwidth;
 			}
-			else if(fd.getName().contains("f")){ //计算卸载到雾所需时间
+			else if(fd.getName().contains("f")){ //Calculate time to unload to fog
 				time2 = job.getCloudletLength() / fd.getAverageMips()
 		                  + getJobFileSize(job) / parameter / LAN_Bandwidth;
-				//卸载所需能耗 = 空闲功率 * 雾执行时间 + 传输功率 * (发送数据大小 + 接收数据大小 ) / LAN带宽
+				//Energy consumption required for unloading = idle power * Cloud execution time + Transmission power * (send data size + received data size ) / LANbandwidth
 				energy2 = powerModel.getStaticPower() * job.getCloudletLength() / fd.getAverageMips()
 						+ powerModel.getSendPower() * getJobFileSize(job) / parameter / LAN_Bandwidth;
 //				System.out.print("energy2 = ");
@@ -60,58 +60,58 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 //                System.out.println("energy2 = "+powerModel.getStaticPower() * job.getCloudletLength() / fd.getHost().getTotalMips() + " + "
 //                                                  +powerModel.getSendPower() +" * "+(getJobInputFileSize(fd, job) + getJobOutputFileSize(job)) * 8 /100 / LAN_Bandwidth);
 			}
-			else{//不卸载
+			else{//Do not uninstall
 				time3 = job.getCloudletLength() / fd.getAverageMips();
 				energy3 = powerModel.getMaxPower() * job.getCloudletLength() / fd.getAverageMips();
 			}
 		}
 		System.out.println("deadline : "+deadline+"; cloud : "+time1+"; fog : "+time2+"; mobile : "+time3);
 //		System.out.println(energy1+",  "+energy2+",  "+energy3);
-		if(deadline < Math.min(time1, time2)){//都不满足时间约束
-			System.out.println("卸载不满足时间约束");
-			job.setoffloading(getmobile().getId());//不卸载
+		if(deadline < Math.min(time1, time2)){//do not meet the time constraints
+			System.out.println("Unloading does not meet time constraints");
+			job.setoffloading(getmobile().getId());//Do not uninstall
 		}
-		else if(deadline > Math.max(time1, time2)){//都满足时间约束
+		else if(deadline > Math.max(time1, time2)){//meet the time constraints
 			if(Math.min(energy3, Math.min(energy1, energy2)) == energy1){
-				System.out.println("都满足时间约束，且卸载到云能耗最小");
-				job.setoffloading(getcloud().getId());//卸载到云
+				System.out.println("meet the time constraints，And offloading to the cloud consumes the least energy");
+				job.setoffloading(getcloud().getId());//Offload to cloud
 			}
 			else if(Math.min(energy3, Math.min(energy1, energy2)) == energy2){
-				System.out.println("都满足时间约束，且卸载到雾能耗最小");
-				job.setoffloading(getFogNode().getId());//卸载到雾节点
+				System.out.println("meet the time constraints，And unloading to fog with minimal energy consumption");
+				job.setoffloading(getFogNode().getId());//Offload to fog node
 			}
 			else{
-				System.out.println("都满足时间约束，但不卸载能耗最小");
-				job.setoffloading(getmobile().getId());//不卸载
+				System.out.println("meet the time constraints，but not unloading the minimum energy consumption");
+				job.setoffloading(getmobile().getId());//Do not uninstall
 			}
 		}
-		else{//deadline介于time1和time2之间
-			if(time1 < time2 && energy1 < energy3){//卸载到云满足时间约束并且能耗较小
-				System.out.println("云满足时间约束，且能耗小");
-				job.setoffloading(getcloud().getId());//卸载到云
+		else{//deadline is between time1 and time2
+			if(time1 < time2 && energy1 < energy3){//Offloading to the cloud meets time constraints and consumes less energy
+				System.out.println("Cloud meets time constraints，and low energy consumption");
+				job.setoffloading(getcloud().getId());//Offload to cloud
 			}
-			else if(time1 > time2 && energy2 < energy3){//卸载到雾节点满足时间约束并且能耗较小
-				System.out.println("雾满足时间约束，且能耗小");
-				job.setoffloading(getFogNode().getId());//卸载到雾节点
+			else if(time1 > time2 && energy2 < energy3){//Unloading to fog nodes satisfies time constraints and consumes less energy
+				System.out.println("Fog meets time constraints，and low energy consumption");
+				job.setoffloading(getFogNode().getId());//Offload to fog node
 			}
 			else{
-				System.out.println("有一个满足时间约束，但不卸载能耗最小");
-				job.setoffloading(getmobile().getId());//不卸载
+				System.out.println("There is a time constraint that is satisfied，but not unloading the minimum energy consumption");
+				job.setoffloading(getmobile().getId());//Do not uninstall
 			}
 		}
 //		if(deadline < Math.min(time1, time2))
-//			job.setoffloading(getmobile().getId());//不卸载
+//			job.setoffloading(getmobile().getId());//Do not uninstall
 //		else{
 //			if(time1 < time2){
-//				job.setoffloading(getcloud().getId());//卸载到云
+//				job.setoffloading(getcloud().getId());//Offload to cloud
 //				addFileToDatacenter(getcloud(), job);
 //			}
 //			else{
-//				job.setoffloading(getFogNode().getId());//卸载到雾节点
+//				job.setoffloading(getFogNode().getId());//Offload to fog node
 //				addFileToDatacenter(getFogNode(), job);
 //			}
 //		}
-		System.out.println("job"+job.getCloudletId()+"卸载决策结果: "+job.getoffloading()+":"+CloudSim.getEntityName(job.getoffloading()));//输出卸载决策结果
+		System.out.println("job"+job.getCloudletId()+"Uninstall decision results: "+job.getoffloading()+":"+CloudSim.getEntityName(job.getoffloading()));//Output unloading decision results
 		return time3;
 	}
 	
@@ -124,18 +124,18 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 		powerModel = (FogLinearPowerModel) getmobile().getHost().getPowerModel();
 		
 		for(FogDevice fd: getFogDeviceLists()){
-			if(fd.getName().equalsIgnoreCase("cloud")){ //计算卸载到云所需时间
+			if(fd.getName().equalsIgnoreCase("cloud")){ //Calculate the time required for offloading to the cloud
 				time1 = job.getCloudletLength() / fd.getAverageMips()
 						                  + getJobInputFileSize(fd, job) / parameter / WAN_Bandwidth;
-				//卸载所需能耗 = 空闲功率 * 云执行时间 + 传输功率 * (发送数据大小 + 接收数据大小 ) / WAN带宽
+				//Energy consumption required for offloading = idle power * cloud execution time + transmission power * (sending data size + receiving data size) / WAN bandwidth
 				energy1 = powerModel.getStaticPower() * job.getCloudletLength() / fd.getAverageMips()
 						     + powerModel.getSendPower() * (getJobInputFileSize(fd, job) + getJobOutputFileSize(job)) 
 						                                                     / parameter / WAN_Bandwidth;
 			}
-			else if(fd.getName().contains("f")){ //计算卸载到雾所需时间
+			else if(fd.getName().contains("f")){ //Calculate time to unload to fog
 				time2 = job.getCloudletLength() / fd.getAverageMips()
 		                  + getJobInputFileSize(fd, job) / parameter / LAN_Bandwidth;
-				//卸载所需能耗 = 空闲功率 * 雾执行时间 + 传输功率 * (发送数据大小 + 接收数据大小 ) / LAN带宽
+				//Energy consumption required for offloading = idle power * fog execution time + transmission power * (sending data size + receiving data size) / LAN bandwidth
 				energy2 = powerModel.getStaticPower() * job.getCloudletLength() / fd.getAverageMips()
 						+ powerModel.getSendPower() * (getJobInputFileSize(fd, job) + getJobOutputFileSize(job)) 
                                                                     / parameter / LAN_Bandwidth;
@@ -148,62 +148,62 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 //                System.out.println("energy2 = "+powerModel.getStaticPower() * job.getCloudletLength() / fd.getHost().getTotalMips() + " + "
 //                                                  +powerModel.getSendPower() +" * "+(getJobInputFileSize(fd, job) + getJobOutputFileSize(job)) * 8 /100 / LAN_Bandwidth);
 			}
-			else{//不卸载
+			else{//Do not uninstall
 				time3 = job.getCloudletLength() / fd.getAverageMips();
 				energy3 = powerModel.getMaxPower() * job.getCloudletLength() / fd.getAverageMips();
 			}
 		}
 		System.out.println("deadline : "+deadline+"; cloud : "+time1+"; fog : "+time2+"; mobile : "+time3);
 //		System.out.println(energy1+",  "+energy2+",  "+energy3);
-		if(deadline < Math.min(time1, time2)){//都不满足时间约束
-			System.out.println("卸载不满足时间约束");
-			job.setoffloading(getmobile().getId());//不卸载
+		if(deadline < Math.min(time1, time2)){//do not meet the time constraints
+			System.out.println("Unloading does not meet time constraints");
+			job.setoffloading(getmobile().getId());//Do not uninstall
 		}
-		else if(deadline > Math.max(time1, time2)){//都满足时间约束
+		else if(deadline > Math.max(time1, time2)){//meet the time constraints
 			if(Math.min(energy3, Math.min(energy1, energy2)) == energy1){
-				System.out.println("都满足时间约束，且卸载到云能耗最小");
-				job.setoffloading(getcloud().getId());//卸载到云
+				System.out.println("meet the time constraints，And offloading to the cloud consumes the least energy");
+				job.setoffloading(getcloud().getId());//Offload to cloud
 				addFileToDatacenter(getcloud(), job);
 			}
 			else if(Math.min(energy3, Math.min(energy1, energy2)) == energy2){
-				System.out.println("都满足时间约束，且卸载到雾能耗最小");
-				job.setoffloading(getFogNode().getId());//卸载到雾节点
+				System.out.println("meet the time constraints，And unloading to fog with minimal energy consumption");
+				job.setoffloading(getFogNode().getId());//Offload to fog node
 				addFileToDatacenter(getFogNode(), job);
 			}
 			else{
-				System.out.println("都满足时间约束，但不卸载能耗最小");
-				job.setoffloading(getmobile().getId());//不卸载
+				System.out.println("meet the time constraints，but not unloading the minimum energy consumption");
+				job.setoffloading(getmobile().getId());//Do not uninstall
 			}
 		}
-		else{//deadline介于time1和time2之间
-			if(time1 < time2 && energy1 < energy3){//卸载到云满足时间约束并且能耗较小
-				System.out.println("云满足时间约束，且能耗小");
-				job.setoffloading(getcloud().getId());//卸载到云
+		else{//deadline is between time1 and time2
+			if(time1 < time2 && energy1 < energy3){//Offloading to the cloud meets time constraints and consumes less energy
+				System.out.println("Cloud meets time constraints，and low energy consumption");
+				job.setoffloading(getcloud().getId());//Offload to cloud
 				addFileToDatacenter(getcloud(), job);
 			}
-			else if(time1 > time2 && energy2 < energy3){//卸载到雾节点满足时间约束并且能耗较小
-				System.out.println("雾满足时间约束，且能耗小");
-				job.setoffloading(getFogNode().getId());//卸载到雾节点
+			else if(time1 > time2 && energy2 < energy3){//Unloading to fog nodes satisfies time constraints and consumes less energy
+				System.out.println("Fog meets time constraints，and low energy consumption");
+				job.setoffloading(getFogNode().getId());//Offload to fog node
 				addFileToDatacenter(getFogNode(), job);
 			}
 			else{
-				System.out.println("有一个满足时间约束，但不卸载能耗最小");
-				job.setoffloading(getmobile().getId());//不卸载
+				System.out.println("There is a time constraint that is satisfied，but not unloading the minimum energy consumption");
+				job.setoffloading(getmobile().getId());//Do not uninstall
 			}
 		}
 //		if(deadline < Math.min(time1, time2))
-//			job.setoffloading(getmobile().getId());//不卸载
+//			job.setoffloading(getmobile().getId());//Do not uninstall
 //		else{
 //			if(time1 < time2){
-//				job.setoffloading(getcloud().getId());//卸载到云
+//				job.setoffloading(getcloud().getId());//Offload to cloud
 //				addFileToDatacenter(getcloud(), job);
 //			}
 //			else{
-//				job.setoffloading(getFogNode().getId());//卸载到雾节点
+//				job.setoffloading(getFogNode().getId());//Offload to fog node
 //				addFileToDatacenter(getFogNode(), job);
 //			}
 //		}
-		System.out.println("job"+job.getCloudletId()+"卸载决策结果: "+job.getoffloading()+":"+CloudSim.getEntityName(job.getoffloading()));//输出卸载决策结果
+		System.out.println("job"+job.getCloudletId()+"unloading decision result: "+job.getoffloading()+":"+CloudSim.getEntityName(job.getoffloading()));//output offloading decision result
 		return time3;
 	}*/
 	
@@ -231,20 +231,20 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 		job.setInputsize(getJobInputFileSize(device, job));
 		job.setOutputsize(getJobOutputFileSize(job));
 		for(FileItem file : job.getFileList()){
-			//job输入输出文件都放入数据中心中
+			//The job input and output files are placed in the data center
 			if(fileToDatacenter.containsKey(file.getName()))
 				IdList.addAll(fileToDatacenter.get(file.getName()));
 			if(!IdList.contains(device.getId()))
 				IdList.add(device.getId());
 			fileToDatacenter.put(file.getName(), IdList);
 			IdList.clear();
-//			if(file.getType() == FileType.INPUT){//job输入文件放入数据中心中
+//			if(file.getType() == FileType.INPUT){//The job input file is placed in the data center
 //				list = fileToDatacenter.get(file.getName());
 //				if(!list.contains(device.getId()))
 //					list.add(device.getId());
 //				fileToDatacenter.put(file.getName(), list);
 //			}
-//			if(file.getType() == FileType.OUTPUT){//job输出文件放入数据中心中
+//			if(file.getType() == FileType.OUTPUT){//The job output file is placed in the data center
 //				fileToDatacenter.put(file.getName(), new ArrayList<Integer>(device.getId()));
 //			}
 		}
