@@ -207,7 +207,7 @@ public class MainUI extends JFrame {
 	/**
 	 * Algorithm parameters setting Frame
 	 */
-	static AlgorithmsSettingUI Settingframe;//算法参数设置小窗口
+	static AlgorithmsSettingUI Settingframe;//Algorithm parameter setting widget
 	static FogEnvironmentUI FEframe;
 
 	
@@ -322,7 +322,7 @@ public class MainUI extends JFrame {
 					Date date = new Date();
 					String d = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
 					try {
-						exportTable(table, null, selectdisplay.getSelectedItem().toString()+"-result-"+d);//结果导出Excel表格
+						exportTable(table, null, selectdisplay.getSelectedItem().toString()+"-result-"+d);//Export the results to an Excel table
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -336,7 +336,7 @@ public class MainUI extends JFrame {
 						if(i == 0)
 							path = d;
 						try {
-							exportTable(table, path, selectdisplay.getSelectedItem().toString()+"-result-"+d);//结果导出Excel表格
+							exportTable(table, path, selectdisplay.getSelectedItem().toString()+"-result-"+d);//Export the results to an Excel table
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
@@ -656,13 +656,13 @@ public class MainUI extends JFrame {
 	
 	@SuppressWarnings("finally")
 	protected static int drawplot(int num, ArrayList<Double> fitness,String xz,String yz) {
-        MWNumericArray x = null; // 存放x值的数组
-        MWNumericArray y = null; // 存放y值的数组
-        DrawPicture plot = null; // 自定义plotter实例，即打包时所指定的类名，根据实际情况更改
+        MWNumericArray x = null; // array of x values
+        MWNumericArray y = null; // an array of y values
+        DrawPicture plot = null; // Customize the plotter instance, that is, the class name specified when packaging, and change it according to the actual situation
          
-        int n = num;//做图点数  横坐标
+        int n = num;//number of plot points horizontal coordinate
         try {
-            int[] dims = {1, n};//几行几列
+            int[] dims = {1, n};//several rows and columns
             x = MWNumericArray.newInstance(dims, MWClassID.DOUBLE, MWComplexity.REAL);
             y = MWNumericArray.newInstance(dims, MWClassID.DOUBLE, MWComplexity.REAL);
              
@@ -671,12 +671,12 @@ public class MainUI extends JFrame {
                 y.set(i, fitness.get(i-1));
             }
              
-            //初始化plotter
+            //Initialize plotter
             plot = new DrawPicture();
              
-            //做图
-            plot.drawplot(x, y, xz, yz);// 在脚本文件中的函数名，根据实际情更改
-            plot.waitForFigures();// 不调用该句，无法弹出绘制图形窗口
+            //make a picture
+            plot.drawplot(x, y, xz, yz);// The function name in the script file, change it according to the actual situation
+            plot.waitForFigures();// Without calling this sentence, the drawing window cannot be popped up
              
         } catch (Exception e1) {
             // TODO: handle exception
@@ -692,16 +692,16 @@ public class MainUI extends JFrame {
 	
 	@SuppressWarnings("finally")
 	protected static int drawbar(List<Double[]> record) {
-        MWNumericArray x = null; // 存放x值的数组
-        MWNumericArray y1 = null; // 存放y1值的数组
-        MWNumericArray y2 = null; // 存放y2值的数组
-        MWNumericArray y3 = null; // 存放y3值的数组
-        DrawBar plot = null; // 自定义plotter实例，即打包时所指定的类名，根据实际情况更改
+        MWNumericArray x = null; // array of x values
+        MWNumericArray y1 = null; // Array to store y1 values
+        MWNumericArray y2 = null; // array to store y2 values
+        MWNumericArray y3 = null; // Array to store y3 values
+        DrawBar plot = null; // Customize the plotter instance, that is, the class name specified when packaging, and change it according to the actual situation
 
-        int n = record.size();//做图点数  横坐标
+        int n = record.size();//number of plot points horizontal coordinate
         
         try {
-            int[] dims = {n, 1};//几行几列
+            int[] dims = {n, 1};//several rows and columns
             x = MWNumericArray.newInstance(dims, MWClassID.DOUBLE, MWComplexity.REAL);
             y1 = MWNumericArray.newInstance(dims, MWClassID.DOUBLE, MWComplexity.REAL);
             y2 = MWNumericArray.newInstance(dims, MWClassID.DOUBLE, MWComplexity.REAL);
@@ -709,18 +709,18 @@ public class MainUI extends JFrame {
             
             for(int i = 1; i <= n ; i++){
             	Double[] data = record.get(i-1);
-            	x.set(i, data[0]);//Algorithm     将矩阵中第i个数设置成某个值
+            	x.set(i, data[0]);//Algorithm     Set the i-th number in the matrix to a certain value
             	y1.set(i, data[1]);//Time
             	y2.set(i, data[2]);//Energy
             	y3.set(i, data[3]);//Cost
             }
             
-            //初始化plotter
+            //Initialize plotter
             plot = new DrawBar();
             
             //做图
-            plot.drawbar(x, y1, y2, y3);// 在脚本文件中的函数名，根据实际情更改
-            plot.waitForFigures();// 不调用该句，无法弹出绘制图形窗口
+            plot.drawbar(x, y1, y2, y3);// The function name in the script file, change it according to the actual situation
+            plot.waitForFigures();// Without calling this sentence, the drawing window cannot be popped up
              
         } catch (Exception e1) {
             // TODO: handle exception
@@ -1267,7 +1267,7 @@ public class MainUI extends JFrame {
 						storage,
 						peList,
 						new VmSchedulerTimeShared(peList),
-						new FogLinearPowerModel(busyPower, idlePower)//默认发送功率100mW 接收功率25mW
+						new FogLinearPowerModel(busyPower, idlePower)//Default transmit power 100mW receive power 25mW
 					);
 				
 				hostList.add(host);
@@ -1278,10 +1278,10 @@ public class MainUI extends JFrame {
 			String os = "Linux"; // operating system
 			String vmm = "Xen";
 			double time_zone = 10.0; // time zone this resource located
-			double cost = 3.0; // the cost of using processing in this resource每秒的花费
+			double cost = 3.0; // the cost of using processing in this resource cost per second
 			/*double costPerMem = 0.05; // the cost of using memory in this resource
 			double costPerStorage = 0.1; // the cost of using storage in this resource
-			double costPerBw = 0.1; // the cost of using bw in this resource每带宽的花费*/
+			double costPerBw = 0.1; // the cost of using bw in this resource cost per bandwidth*/
 			LinkedList<Storage> storageList = new LinkedList<Storage>();
 
 			FogDeviceCharacteristics characteristics = new FogDeviceCharacteristics(
