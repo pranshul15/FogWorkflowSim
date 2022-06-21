@@ -78,6 +78,7 @@ import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.offloading.OffloadingStrategyAllinCloud;
 import org.fog.offloading.OffloadingStrategyAllinFog;
 import org.fog.offloading.OffloadingStrategySimple;
+import org.fog.offloading.OffloadingStrategyFuzzy;
 import org.fog.utils.FogLinearPowerModel;
 import org.fog.utils.FogUtils;
 import org.workflowsim.CondorVM;
@@ -114,18 +115,18 @@ import jxl.write.biff.RowsExceededException;
 
 @SuppressWarnings("serial")
 public class MainUI extends JFrame {
-	final static String[] algrithmStr = new String[]{"MINMIN","MAXMIN","FCFS","ROUNDROBIN","PSO","GA"};
+	final static String[] algrithmStr = new String[]{"MINMIN","MAXMIN","FCFS","ROUNDROBIN","PSO","GA","FUZZY"};
 	final static String[] objectiveStr = new String[]{"Time","Energy","Cost"};
 	final static String[] inputTypeStr = new String[]{"Montage","CyberShake","Epigenomics","Inspiral","Sipht"};
 	final static String[] nodeSizeStr = new String[]{};
 	final static String[] cloudNumStr = new String[]{null,"1","2","3","4","5"};
 	final static String[] edgeNumStr = new String[]{null,"1","2","3","4","5"};
 	final static String[] mobileNumStr = new String[]{null,"1","2","3","4","5"};
-	final static String[] strategyStr = new String[]{null,"All-in-Fog","All-in-Cloud","Simple"};
+	final static String[] strategyStr = new String[]{null,"All-in-Fog","All-in-Cloud","Simple","Fuzzy"};
 	final static String[] columnNames = {"Job ID", "Task ID", "STATUS", "Data center ID", "VM ID", 
-			"Time","Start Time","Finish Time","Depth","Cost","Parents"};//表头元素
+			"Time","Start Time","Finish Time","Depth","Cost","Parents"};//header element
 	private static JComboBox inputTypeCb = new JComboBox(inputTypeStr);
-	private static JComboBox nodeSizeCb = new JComboBox(nodeSizeStr);//任务个数
+	private static JComboBox nodeSizeCb = new JComboBox(nodeSizeStr);//number of tasks
 	private static JComboBox cloudNumCb = new JComboBox(cloudNumStr);
 	private static JComboBox edgeNumCb = new JComboBox(edgeNumStr);
 	private static JComboBox mobileNumCb = new JComboBox(mobileNumStr);
@@ -134,8 +135,8 @@ public class MainUI extends JFrame {
 	private final static JButton stnBtn = new JButton("Start Simulation");
 	private final static JButton cmpBtn = new JButton("Compare");
 	
-	static boolean Flag = true;//表示需要画图
-	static boolean Flag1 = true;//判断FogEnvironmentUI需不需要重新绘制
+	static boolean Flag = true;//Indicates need to draw
+	static boolean Flag1 = true;//Determine whether FogEnvironmentUI needs to be redrawn
     static List<FogDevice> fogDevices = new ArrayList<FogDevice>();
     static List<Double[]> record=new ArrayList<Double[]>();
 	final static int numOfDepts = 1;
@@ -172,11 +173,12 @@ public class MainUI extends JFrame {
 	private final JCheckBox chckbxRoundrobin = new JCheckBox("ROUNDROBIN");
 	private final JCheckBox chckbxGa = new JCheckBox("GA");
 	private final JCheckBox chckbxPso = new JCheckBox("PSO");
+	private final JCheckBox chckbxFuzzy = new JCheckBox("FUZZY");
 	static List<JCheckBox> CheckBoxList = new ArrayList<JCheckBox>();
 	private final JRadioButton rdbtnTime = new JRadioButton("Time",true);
 	private final JRadioButton rdbtnEnergy = new JRadioButton("Energy");
 	private final JRadioButton rdbtnCost = new JRadioButton("Cost");
-	static ButtonGroup g1 = new ButtonGroup(); //分组进行单选
+	static ButtonGroup g1 = new ButtonGroup(); //group selection
 	private static String scheduler_method;
 	private static String optimize_objective;
 	
@@ -257,20 +259,20 @@ public class MainUI extends JFrame {
 	    	data.add(null);
 	    for(int i = 0; i < 30; i++)
 	    	rowData[i] = data.toArray();
-	    // 创建一个表格，指定 所有行数据 和 表头
+	    // Create a table specifying all row data and headers
 		table = new JTable(rowData, columnNames);
 		
-		// 设置表格内容颜色
-		table.setForeground(Color.BLACK);                   // 字体颜色
-		table.setFont(new Font("Consolas", Font.PLAIN, 14));      // 字体样式
-		table.setSelectionForeground(Color.DARK_GRAY);      // 选中后字体颜色
-		table.setSelectionBackground(Color.LIGHT_GRAY);     // 选中后字体背景
-		table.setGridColor(Color.LIGHT_GRAY);                     // 网格颜色
+		// Set table content color
+		table.setForeground(Color.BLACK);                   // font color
+		table.setFont(new Font("Consolas", Font.PLAIN, 14));      // font style
+		table.setSelectionForeground(Color.DARK_GRAY);      // Selected font color
+		table.setSelectionBackground(Color.LIGHT_GRAY);     // font background after selection
+		table.setGridColor(Color.LIGHT_GRAY);                     // grid color
 
-        // 设置表头
-        table.getTableHeader().setForeground(Color.black);                // 设置表头名称字体颜色
-        table.getTableHeader().setResizingAllowed(false);               // 设置不允许手动改变列宽
-        table.getTableHeader().setReorderingAllowed(false);             // 设置不允许拖动重新排序各列
+        // set header
+        table.getTableHeader().setForeground(Color.black);                // Set the header name font color
+        table.getTableHeader().setResizingAllowed(false);               // The setting does not allow to manually change the column width
+        table.getTableHeader().setReorderingAllowed(false);             // Setting does not allow drag to reorder columns
         
         table.setFillsViewportHeight(true);
 		table.setCellSelectionEnabled(true);
@@ -393,8 +395,8 @@ public class MainUI extends JFrame {
 		    public void actionPerformed(ActionEvent e){
 		        JFileChooser jfc=new JFileChooser();
 		        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		        jfc.setCurrentDirectory(new File("e://dax"));// 文件选择器的初始目录定为e盘
-		        FileNameExtensionFilter filter = new FileNameExtensionFilter("xml文件(*.xml)", "xml");
+		        jfc.setCurrentDirectory(new File("e://dax"));// The initial directory of the file selector is set to the e drive
+		        FileNameExtensionFilter filter = new FileNameExtensionFilter("xml file (*.xml)", "xml");
 		        jfc.setFileFilter(filter);
 		        jfc.showDialog(new JLabel(), "select");
 		        if(jfc.getSelectedFile()!=null){
@@ -572,6 +574,12 @@ public class MainUI extends JFrame {
 		CheckBoxList.add(chckbxGa);
 		panel_2.add(chckbxGa);
 		
+		chckbxFuzzy.setFont(new Font("Consolas", Font.PLAIN, 12));
+		chckbxFuzzy.setBackground(Color.WHITE);
+		chckbxFuzzy.setBounds(154, 116, 60, 23);
+		CheckBoxList.add(chckbxFuzzy);
+		panel_2.add(chckbxFuzzy);
+		
 		rdbtnTime.setFont(new Font("Consolas", Font.PLAIN, 12));
 		rdbtnTime.setBackground(Color.WHITE);
 		rdbtnTime.setBounds(89, 144, 68, 23);
@@ -741,14 +749,14 @@ public class MainUI extends JFrame {
 	            		showDialog("Please choose an Alogorithm", "error");
 	            	else if(GetAlgorithms().size() > 1)
 	            		showDialog("You chose more than one , please click the 'Compare' button", "error");
-	            	else{
+	            	else{ //GetAlgorithms().size == 1
 	            		for(JCheckBox cb : CheckBoxList){
 		            		if(cb.isSelected())
 		            			scheduler_method=cb.getText();
 		            	}
-		            	optimize_objective = GetObjective();//获取所选择的优化目标
+		            	optimize_objective = GetObjective();//Get the selected optimization goal
 		            	if(scheduler_method.equals("PSO")){
-		            		if(Settingframe.getpsosetting(wfEngine) < 0){     //获取所输入的PSO参数，若无参数则弹出窗口
+		            		if(Settingframe.getpsosetting(wfEngine) < 0){     //Get the entered PSO parameters, if there are no parameters, a pop-up window will appear
 		            			showDialog("PSO algorithm parameters are not set , please go to the 'Setting' panel", "error");
 		            			Settingframe.display(scheduler_method);
 		            		}
@@ -784,7 +792,7 @@ public class MainUI extends JFrame {
 		            		}
 		            	}
 		            	else if(scheduler_method.equals("GA")){
-		            		if(Settingframe.getgasetting(wfEngine) < 0){      //获取所输入的GA参数，若无参数则弹出窗口
+		            		if(Settingframe.getgasetting(wfEngine) < 0){      //Get the entered GA parameters, if there are no parameters, a pop-up window will appear
 		            			showDialog("GA algorithm parameters are not set , please go to the 'Setting' panel", "error");
 		            			Settingframe.display(scheduler_method);
 		            		}
@@ -819,7 +827,7 @@ public class MainUI extends JFrame {
 			            		System.out.println("Finished drawing");
 		            		}
 		            	}
-		            	else{//其他算法只支持优化时间
+		            	else{//Other algorithms only support optimization time(FCFS,MaxMin,MinMin,RoundRobin)
 			            	if(!optimize_objective.equalsIgnoreCase("Time"))
 			            		showDialog(scheduler_method+" doesn't support '"+optimize_objective+"' objective , only support 'Time'", "error");
 			            	else
@@ -840,13 +848,13 @@ public class MainUI extends JFrame {
 	            	else if(aList.size() == 1)
 	            		showDialog("You chose one , please click the 'Start Simulation' button", "error");
 	            	else{
-	            		optimize_objective = GetObjective();//获取所选择的优化目标
+	            		optimize_objective = GetObjective();//Get the selected optimization goal
 		            	for(String al : aList){
 		            		System.out.println(al);
 		            		scheduler_method = al;
 		            		if(scheduler_method.equals("PSO")){
 			            		if(Settingframe.getpsosetting(wfEngine) < 0){
-			            			//获取所输入的PSO参数，若无参数则弹出窗口
+			            			//Get the entered PSO parameters, if there are no parameters, a pop-up window will appear
 			            			showDialog("PSO algorithm parameters are not set , please go to the 'Setting' panel", "error");
 			            			Settingframe.display(scheduler_method);
 			            			record.clear();
@@ -877,7 +885,7 @@ public class MainUI extends JFrame {
 			            	}
 			            	else if(scheduler_method.equals("GA")){
 			            		if(Settingframe.getgasetting(wfEngine) < 0){
-			            			//获取所输入的GA参数，若无参数则弹出窗口
+			            			//Get the entered GA parameters, if there are no parameters, a pop-up window will appear
 			            			showDialog("GA algorithm parameters are not set , please go to the 'Setting' panel", "error");
 			            			Settingframe.display(scheduler_method);
 			            			record.clear();
@@ -906,7 +914,7 @@ public class MainUI extends JFrame {
 			            			displayTime(averageTime);
 			            		}
 			            	}
-			            	else{//其他算法只支持优化时间
+			            	else{//Other algorithms only support optimization time
 				            	if(!optimize_objective.equalsIgnoreCase("Time")){
 				            		showDialog(scheduler_method+" doesn't support "+optimize_objective+" objective , can't compare", "error");
 				            		record.clear();
@@ -1067,6 +1075,9 @@ public class MainUI extends JFrame {
 					case "Simple":
 						wfEngine.getoffloadingEngine().setOffloadingStrategy(new OffloadingStrategySimple());
 						break;
+					case "Fuzzy":
+						wfEngine.getoffloadingEngine().setOffloadingStrategy(new OffloadingStrategyFuzzy());
+						break;
 					default:
 						wfEngine.getoffloadingEngine().setOffloadingStrategy(null);
 						break;
@@ -1122,6 +1133,8 @@ public class MainUI extends JFrame {
 			 return 5.0;
 		 else if(scheduler_method.equals(algrithmStr[5]))
 			 return 6.0;
+		 else if(scheduler_method.equals(algrithmStr[6]))
+			 return 7.0;
 		 return null;
 	}
 	
@@ -1130,9 +1143,9 @@ public class MainUI extends JFrame {
 			double ratePerMips = 0.96;
 			double costPerMem = 0.05; // the cost of using memory in this resource
 			double costPerStorage = 0.1; // the cost of using storage in this resource
-			double costPerBw = 0.2;//每带宽的花费
+			double costPerBw = 0.2;//cost per bandwidth
 			
-			List<Long> GHzList = new ArrayList<>();//云中的主机
+			List<Long> GHzList = new ArrayList<>();//Hosting in the Cloud
 			List<Double> CostList = new ArrayList<>();
 			for(JTextField textField : FEframe.DCMipsMap.get("cloud")){
 				if(textField.getText().isEmpty())
@@ -1163,9 +1176,9 @@ public class MainUI extends JFrame {
 			double ratePerMips = 0.48;
 			double costPerMem = 0.05; // the cost of using memory in this resource
 			double costPerStorage = 0.1; // the cost of using storage in this resource
-			double costPerBw = 0.1;//每带宽的花费
+			double costPerBw = 0.1;//cost per bandwidth
 			
-			List<Long> GHzList = new ArrayList<>();//雾中的主机
+			List<Long> GHzList = new ArrayList<>();//host in fog
 			List<Double> CostList = new ArrayList<>();
 			for(JTextField textField : FEframe.DCMipsMap.get("fog")){
 				if(textField.getText().isEmpty())
@@ -1197,7 +1210,7 @@ public class MainUI extends JFrame {
 		private  FogDevice addMobile(String id, int userId, String appId, int parentId){
 			double costPerMem = 0.05; // the cost of using memory in this resource
 			double costPerStorage = 0.1; // the cost of using storage in this resource
-			double costPerBw = 0.3;//每带宽的花费
+			double costPerBw = 0.3;//cost per bandwidth
 			
 			List<Long> GHzList = new ArrayList<>();
 			List<Double> CostList = new ArrayList<>();
@@ -1438,10 +1451,10 @@ public class MainUI extends JFrame {
 	        }
 	    }
 	    /**
-	     * 导出jtable的model到excel
-	     * @param table 要导出的jtable
-	     * @param filename 要导出的文件名
-	     * @throws IOException IO异常
+	     * Export the model of jtable to excel
+	     * @param table jtable to export
+	     * @param filename filename to export
+	     * @throws IOException IO exception
 	     */
 	    public static void exportTable(JTable table, String path, String filename) throws IOException {
 	        try {
@@ -1455,16 +1468,16 @@ public class MainUI extends JFrame {
 	        	}
 	        	else{
 	        		file = new File("results/"+path+"/");
-	        		if(!file.exists())//判断该文件是否存在
+	        		if(!file.exists())//Check if the file exists
 	                    file.mkdir();
 	        		file = new File("results/"+path+"/"+filename);
 	        	}
 	            OutputStream out = new FileOutputStream(file);
 	            TableModel model = table.getModel();
 	            WritableWorkbook wwb = Workbook.createWorkbook(out);
-	            // 创建字表，并写入数据
+	            // Create a word table and write data
 	            WritableSheet ws = wwb.createSheet("Sheet", 0);
-	            // 添加标题
+	            // add title
 	            for (int i = 0; i < model.getColumnCount(); i++) {
 	                jxl.write.Label labelN = new jxl.write.Label(i, 0, model.getColumnName(i));
 	                try {
@@ -1475,7 +1488,7 @@ public class MainUI extends JFrame {
 	                    e.printStackTrace();
 	                }
 	            }
-	            // 添加列
+	            // add column
 	            for (int i = 0; i < model.getColumnCount(); i++) {
 	                for (int j = 1; j <= model.getRowCount(); j++) {
 	                    jxl.write.Label labelN = new jxl.write.Label(i, j, model.getValueAt(j - 1, i).toString());
@@ -1497,17 +1510,17 @@ public class MainUI extends JFrame {
 	        }
 	    }
                                                                                                                                                                                                                                                                                                                       
-	    private static void printdevices() {    //输出设备列表
-	    	System.out.println("设备列表：");
+	    private static void printdevices() {    //output device list
+	    	System.out.println("Device List：");
 	    	for(SimEntity entity:CloudSim.getEntityList())
 	    		System.out.println("    "+entity.getId()+"  "+entity.getName());
 	    }
 	    
 	    /**
-	     * 使得表格显示完整
-	     * @param myTable 输入的表格
+	     * make the table display complete
+	     * @param myTable input form
 	     */
-		public static void FitTableColumns(JTable myTable){//使得表格显示完整
+		public static void FitTableColumns(JTable myTable){//make the table display complete
 	    	  JTableHeader header = myTable.getTableHeader();
 	    	     int rowCount = myTable.getRowCount();
 
@@ -1523,13 +1536,13 @@ public class MainUI extends JFrame {
 	    	               myTable.getValueAt(row, col), false, false, row, col).getPreferredSize().getWidth();
 	    	             width = Math.max(width, preferedWidth);
 	    	         }
-	    	         header.setResizingColumn(column); // 此行很重要
+	    	         header.setResizingColumn(column); // this trip is important
 	    	         column.setWidth(width+myTable.getIntercellSpacing().width+20);
 	    	     }
 	    }
 	    
 		/**
-		 *  清除上次仿真所有对象及标记
+		 *  Clear all objects and markers from the last simulation
 		 */
 		public static int clear()
 		{
@@ -1539,11 +1552,11 @@ public class MainUI extends JFrame {
 				wfEngine.jobList.removeAll(wfEngine.jobList);
 				controller.clear();
 				wfEngine.clearFlag();
-				fogDevices.removeAll(fogDevices);  //清除对象列表
+				fogDevices.removeAll(fogDevices);  //clear object list
 				FogUtils.set1();
 			    Object[][] rowData = {};
 			    
-			    // 创建一个表格，指定 所有行数据 和 表头
+			    // Create a table specifying all row data and headers
 				table = new JTable(rowData, columnNames);
 				table.getTableHeader().setForeground(Color.black);
 //				FitTableColumns(table);
@@ -1557,9 +1570,9 @@ public class MainUI extends JFrame {
 		}
 		
 		/**
-		 *  获得系统自带所选工作流结构的相关文件任务个数列表
-		 * @param filename 工作流结构名称
-		 * @return 自带所选工作流结构的任务个数列表
+		 *  Get a list of related file tasks with the selected workflow structure in the system
+		 * @param filename Workflow Structure Name
+		 * @return A list of the number of tasks with the selected workflow structure
 		 */
 		public static ArrayList<String> getFiles(String filename) {
 		    ArrayList<String> files = new ArrayList<String>();
@@ -1581,13 +1594,13 @@ public class MainUI extends JFrame {
 		}
 		
 		/**
-		 * 针对某个算法进行仿真模拟并记录仿真结果
+		 * Run a simulation for an algorithm and record the simulation results
 		 */
 		private long StartAlgorithm() {
 			clear();
 			Log.printLine("Starting FogWorkflowSim version 1.0");
         	System.out.println("Optimization objective : "+optimize_objective);
-        	if(XMLFile!=null){//自定义工作流xml文件
+        	if(XMLFile!=null){//Custom workflow xml file
         		daxPath = XMLFile.getPath();
         		String path = XMLFile.getName();
         		String str="";
@@ -1600,7 +1613,7 @@ public class MainUI extends JFrame {
         		}
         		nodeSize = Integer.parseInt(str);
         	}
-        	else{//系统自带工作流xml文件
+        	else{//The system comes with a workflow xml file
         		daxPath="config/dax/"+inputTypeCb.getSelectedItem()+"_"+nodeSizeCb.getSelectedItem()+".xml";
         		nodeSize = Integer.parseInt((String) nodeSizeCb.getSelectedItem());
         	}
@@ -1621,7 +1634,7 @@ public class MainUI extends JFrame {
 		}
 		
 		/**
-		 * 获取所选择的算法列表
+		 * Get a list of selected algorithms
 		 */
 		private List<String> GetAlgorithms(){
 			List<String> algorithms = new ArrayList<String>();
@@ -1633,7 +1646,7 @@ public class MainUI extends JFrame {
 		}
 		
 		/**
-		 * 获得所选择的优化目标
+		 * Get the selected optimization goal
 		 */
 		private String GetObjective() {
 			String objective = null;
@@ -1648,9 +1661,9 @@ public class MainUI extends JFrame {
 		}
 		
 		/**
-		 * 弹出内容为String的窗口
-		 * @param string 提示内容
-		 * @param type 窗口类型
+		 * Pop up a window whose content is String
+		 * @param string Tips
+		 * @param type window type
 		 * @return int an integer indicating the option chosen by the user,
 		 * or CLOSED_OPTION if the user closed the dialog
 		 */
@@ -1675,9 +1688,9 @@ public class MainUI extends JFrame {
 		}
 		
 		/**
-		 * 对list中的double类型元素分别求平均值
+		 * Calculate the average of the double type elements in the list respectively
 		 * @param list
-		 * @return 求完平均值后的double类型数组
+		 * @return Array of double type after averaging
 		 */
 		private Double[] GetMean(List<Double[]> list) {
 			double a = 0;
@@ -1710,7 +1723,7 @@ public class MainUI extends JFrame {
 		}
 		
 		/**
-		 * 设置 comoBox 可输入并且限制输入只能是数字
+		 * Set comoBox to be input and limit input to only numbers
 		 * @param comboBox
 		 */
 		private void InputLimit(JComboBox comboBox) {

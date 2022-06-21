@@ -35,9 +35,9 @@ public class Job extends Task {
      */
     private List<Task> taskList;
     private double Processingcost;
-    private int offloading;// 数字代表数据中心编号,-1表示未进行卸载决策
-    private double Inputsize;//需要终端设备发送的输入文件大小
-    private double Outputsize;//输出到终端设备的文件大小
+    private int offloading;// The number represents the data center number, -1 means no offloading decision was made
+    private double Inputsize;//The size of the input file that needs to be sent by the terminal device
+    private double Outputsize;//The file size of the output to the terminal device
     /**
      * by Fan
      */

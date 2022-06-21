@@ -62,9 +62,10 @@ public class OffloadingEngine extends SimEntity{
 				time += getOffloadingStrategy().SelectDatacenter(job, deadline);
 			}
 		}
-		System.out.println("手机运行时间之和 = "+time);
+		System.out.println("\r\n"
+				+ "Sum of mobile phone runtimes = "+time);
 		long endoffloading = System.currentTimeMillis();
-		System.out.println("卸载策略运行时间 = " + (endoffloading - startoffloading));
+		System.out.println("Uninstall policy runtime = " + (endoffloading - startoffloading));
 		return endoffloading - startoffloading;
 	}
 	

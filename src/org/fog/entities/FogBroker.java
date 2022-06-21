@@ -29,6 +29,7 @@ import org.workflowsim.scheduling.MinMinSchedulingAlgorithm;
 import org.workflowsim.scheduling.PsoScheduling;
 import org.workflowsim.scheduling.RoundRobinSchedulingAlgorithm;
 import org.workflowsim.scheduling.StaticSchedulingAlgorithm;
+import org.workflowsim.scheduling.FuzzySchedulingAlgorithm;
 import org.workflowsim.utils.Parameters;
 import org.workflowsim.utils.Parameters.SchedulingAlgorithm;
 
@@ -42,8 +43,8 @@ public class FogBroker extends PowerDatacenterBroker{
      * the start time of algorithm
      */
     public long startTime;
-    public static int count=0;//初始化时，计数当前根据哪个粒子来为job分配虚拟机
-    public static int count2=0;//更新粒子时，计数当前根据哪个粒子来为job分配虚拟机
+    public static int count=0;//When initialized, the count is currently based on which particle to allocate virtual machines to the job
+    public static int count2=0;//When updating particles, the count is based on which particle the job is currently assigned to VMs
     public static int initIndexForGA=0;
     public static int tempChildrenIndex=0;
     private static List<CondorVM> scheduledVmList;
@@ -153,6 +154,7 @@ public class FogBroker extends PowerDatacenterBroker{
 				case STATIC:
 				case DATA:
 				case ROUNDROBIN:
+				case FUZZY:
 					processCloudletUpdate(ev);
 					break;
 
@@ -218,6 +220,9 @@ public class FogBroker extends PowerDatacenterBroker{
             case ROUNDROBIN:
                 algorithm = new RoundRobinSchedulingAlgorithm();
                 break;
+            case FUZZY:
+            	algorithm = new FuzzySchedulingAlgorithm();
+            	break;
             default:
                 algorithm = new StaticSchedulingAlgorithm();
                 break;
@@ -331,8 +336,8 @@ public class FogBroker extends PowerDatacenterBroker{
 
     /**
      * Update a cloudlet (job)
-     * 每接收到一个任务以后，调用此方法，设置提交到调度机上的任务，以及调度机绑定的虚拟机，并为cloudlets分配虚拟机
-     *每处理完一个任务以后，调用此方法，更新提交到调度机上的任务，以及调度机绑定的虚拟机
+     * After each task is received, this method is called to set the task submitted to the scheduler, the virtual machine bound to the scheduler, and assign the virtual machine to cloudlets
+     *After each task is processed, this method is called to update the task submitted to the scheduler and the virtual machine bound to the scheduler
      * @param ev a simEvent object
      */
     protected void processCloudletUpdateForPSOInit(SimEvent ev) {
@@ -363,7 +368,7 @@ public class FogBroker extends PowerDatacenterBroker{
             
             schedule(getVmsToDatacentersMap().get(vmId), delay, CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
         }
-        //把Cloudlets交由数据中心处理以后，从CloudletList中移除这些任务，并向CloudletSubmittedList中添加这些任务
+        //After handing over Cloudlets to the data center, remove these tasks from CloudletList and add these tasks to CloudletSubmittedList
         getCloudletList().removeAll(scheduledList);
         getCloudletSubmittedList().addAll(scheduledList);
         cloudletsSubmitted += scheduledList.size();
@@ -392,7 +397,7 @@ public class FogBroker extends PowerDatacenterBroker{
             }
             schedule(getVmsToDatacentersMap().get(vmId), delay, CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
         }
-        //把Cloudlets交由数据中心处理以后，从CloudletList中移除这些任务，并向CloudletSubmittedList中添加这些任务
+        //After handing over Cloudlets to the data center, remove these tasks from CloudletList and add these tasks to CloudletSubmittedList
         getCloudletList().removeAll(scheduledList);
         getCloudletSubmittedList().addAll(scheduledList);
         cloudletsSubmitted += scheduledList.size();
@@ -417,7 +422,7 @@ public class FogBroker extends PowerDatacenterBroker{
             }
             schedule(getVmsToDatacentersMap().get(vmId), delay, CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
         }
-        //把Cloudlets交由数据中心处理以后，从CloudletList中移除这些任务，并向CloudletSubmittedList中添加这些任务
+        //After handing over Cloudlets to the data center, remove these tasks from CloudletList and add these tasks to CloudletSubmittedList
         getCloudletList().removeAll(scheduledList);
         getCloudletSubmittedList().addAll(scheduledList);
         cloudletsSubmitted += scheduledList.size();
@@ -449,7 +454,7 @@ public class FogBroker extends PowerDatacenterBroker{
             }
             schedule(getVmsToDatacentersMap().get(vmId), delay, CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
         }
-        //把Cloudlets交由数据中心处理以后，从CloudletList中移除这些任务，并向CloudletSubmittedList中添加这些任务
+        //After handing over Cloudlets to the data center, remove these tasks from CloudletList and add these tasks to CloudletSubmittedList
         getCloudletList().removeAll(scheduledList);
         getCloudletSubmittedList().addAll(scheduledList);
         cloudletsSubmitted += scheduledList.size();
@@ -479,7 +484,7 @@ public class FogBroker extends PowerDatacenterBroker{
             }
             schedule(getVmsToDatacentersMap().get(vmId), delay, CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
         }
-        //把Cloudlets交由数据中心处理以后，从CloudletList中移除这些任务，并向CloudletSubmittedList中添加这些任务
+        //After handing over Cloudlets to the data center, remove these tasks from CloudletList and add these tasks to CloudletSubmittedList
         getCloudletList().removeAll(scheduledList);
         getCloudletSubmittedList().addAll(scheduledList);
         cloudletsSubmitted += scheduledList.size();
@@ -505,7 +510,7 @@ public class FogBroker extends PowerDatacenterBroker{
             }
             schedule(getVmsToDatacentersMap().get(vmId), delay, CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
         }
-        //把Cloudlets交由数据中心处理以后，从CloudletList中移除这些任务，并向CloudletSubmittedList中添加这些任务
+        //After handing over Cloudlets to the data center, remove these tasks from CloudletList and add these tasks to CloudletSubmittedList
         getCloudletList().removeAll(scheduledList);
         getCloudletSubmittedList().addAll(scheduledList);
         cloudletsSubmitted += scheduledList.size();
@@ -639,17 +644,17 @@ public class FogBroker extends PowerDatacenterBroker{
 	}
     
     /**
-     * 根据任务卸载决策的结果，对智能算法所生成的虚拟机编号进行转换
-     * @param cloudlet 任务
-     * @param vmId 智能算法生成的虚拟机编号
-     * @return 根据卸载决策结果所选择的虚拟机编号
+     * Convert the virtual machine number generated by the intelligent algorithm according to the result of the task offloading decision
+     * @param cloudlet Task
+     * @param vmId The virtual machine number generated by the intelligent algorithm
+     * @return The virtual machine number selected based on the result of the uninstallation decision
      */
     private int ChooseVm(Cloudlet cloudlet, int vmId) {
     	List<CondorVM> list = new ArrayList<CondorVM>();
     	int chooseVmId = -1;
     	Job job = (Job) cloudlet;
     	if(job.getoffloading() == -1){
-//    		Log.printLine("没有进行卸载决策");
+//    		Log.printLine("No uninstall decision was made");
     		return vmId;
     	}
     	else{
@@ -672,9 +677,9 @@ public class FogBroker extends PowerDatacenterBroker{
 	}
     
     /**
-     * 根据任务卸载决策的结果得到相应数据中心的虚拟机列表
-     * @param cloudlet 任务
-     * @return 决策后相应数据中心的虚拟机列表
+     * Obtain the virtual machine list of the corresponding data center according to the result of the task offloading decision
+     * @param cloudlet Task
+     * @return The list of virtual machines in the corresponding data center after the decision
      */
     private List<CondorVM> getScheduledVmList(Cloudlet cloudlet) {
     	Job job = (Job) cloudlet;
