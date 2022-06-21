@@ -21,7 +21,7 @@ import org.fog.entities.FogDevice;
 
 
 /** 
- * 处理vm请求
+ * handle vm requests
  * Datacenter class is a CloudResource whose hostList are virtualized. It deals with processing of
  * VM queries (i.e., handling of VMs) instead of processing Cloudlet-related queries. So, even
  * though an AllocPolicy will be instantiated (in the init() method of the superclass, it will not
@@ -34,13 +34,13 @@ import org.fog.entities.FogDevice;
  */
 public class Datacenter extends SimEntity {
 
-	/** The characteristics. 查找主机，主机状态数量和pe状态数量等信息*/
+	/** The characteristics. Find information such as host, number of host states and number of pe states*/
 	private DatacenterCharacteristics characteristics;
 
 	/** The regional cis name. */
 	private String regionalCisName;
 
-	/** The vm provisioner. vm分配策略*/
+	/** The vm provisioner. vm allocation strategy*/
 	private VmAllocationPolicy vmAllocationPolicy;
 
 	/** The last process time. */
@@ -52,7 +52,7 @@ public class Datacenter extends SimEntity {
 	/** The vm list. */
 	private List<? extends Vm> vmList;
 
-	/** The scheduling interval. 调度事件间隔  */
+	/** The scheduling interval. schedule event interval  */
 	private double schedulingInterval;
 
 	/**

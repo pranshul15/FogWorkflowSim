@@ -26,7 +26,7 @@ import org.workflowsim.CondorVM;
 import org.workflowsim.Job;
 import org.workflowsim.WorkflowSimTags;
 
-import sun.misc.VM;
+//import sun.misc.VM;
 
 /**
  * MinMin algorithm.
@@ -51,7 +51,6 @@ public class MinMinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
         for (int t = 0; t < size; t++) {
             hasChecked.add(false);
         }
-//        for (int i = 0; i < size; i++) 
         while(!cloudlets.isEmpty()){
             int minIndex = 0;
             Cloudlet minCloudlet = null;
@@ -87,7 +86,7 @@ public class MinMinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
             List<CondorVM> schedulableVmList = new ArrayList<CondorVM>();
             if(job.getoffloading() == -1){
             	schedulableVmList.addAll(vlist);
-//            	System.out.println("没有进行卸载决策");
+//            	System.out.println("No uninstall decision was made");
             }
             else{
             	for(CondorVM vm : vlist){
@@ -95,9 +94,9 @@ public class MinMinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
                 		schedulableVmList.add(vm);
                 }
 			}
-//            System.out.print("  job"+job.getCloudletId()+"卸载到"+CloudSim.getEntityName(job.getoffloading())+", 可调度的虚拟机有: ");
-//            for(CondorVM v2 : schedulableVmList)
-//            	System.out.print(v2.getId()+",");
+            System.out.print("  job"+job.getCloudletId()+"uninstall to"+CloudSim.getEntityName(job.getoffloading())+", The schedulable virtual machines are: ");
+            for(CondorVM v2 : schedulableVmList)// printing line
+            	System.out.print(v2.getId()+",");
             int vmSize = schedulableVmList.size();
             CondorVM firstIdleVm = null;//(CondorVM)getVmList().get(0);
             for (int j = 0; j < vmSize; j++) {
@@ -117,17 +116,17 @@ public class MinMinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
             	firstIdleVm = fast;
             }
             else{
-            for (int j = 0; j < vmSize; j++) {
-                CondorVM vm = schedulableVmList.get(j);
-                if ((vm.getState() == WorkflowSimTags.VM_STATUS_IDLE)
-                        && vm.getCurrentRequestedTotalMips() > firstIdleVm.getCurrentRequestedTotalMips()) {
-                    firstIdleVm = vm;
-                }
-            }
+	            for (int j = 0; j < vmSize; j++) {
+	                CondorVM vm = schedulableVmList.get(j);
+	                if ((vm.getState() == WorkflowSimTags.VM_STATUS_IDLE)
+	                        && vm.getCurrentRequestedTotalMips() > firstIdleVm.getCurrentRequestedTotalMips()) {
+	                    firstIdleVm = vm;
+	                }
+	            }
             }
             firstIdleVm.setState(WorkflowSimTags.VM_STATUS_BUSY);
             minCloudlet.setVmId(firstIdleVm.getId());
-//            System.out.println("调度到vm"+firstIdleVm.getId());
+            System.out.println("schedule to vm"+firstIdleVm.getId());//printing line
             getScheduledList().add(minCloudlet);
             cloudlets.remove(minCloudlet);
             size = cloudlets.size();

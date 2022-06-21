@@ -1092,7 +1092,7 @@ public class MainUI extends JFrame {
 	             * the scheduler that controls this vm.
 	             */
 	            List<CondorVM> vmlist0 = createVM(wfEngine.getSchedulerId(0), Parameters.getVmNum(), hostlist);
-	            hostlist = null;//清空，释放内存
+	            hostlist = null;//clear, free memory
 	            /**
 	             * Submits this list of vms to this WorkflowEngine.
 	             */
@@ -1107,7 +1107,7 @@ public class MainUI extends JFrame {
 	            List<PowerHost> list;
 	            for(FogDevice fogdevice:controller.getFogDevices()){
 	            	wfEngine.bindSchedulerDatacenter(fogdevice.getId(), 0);
-	            	list = fogdevice.getHostList();  //输出设备上的主机
+	            	list = fogdevice.getHostList();  //host on output device
 	            	System.out.println(fogdevice.getName()+": ");
 	            	for (PowerHost host : list){
 	            		System.out.print(host.getId()+":Mips("+host.getTotalMips()+"),"+"cost("+host.getcostPerMips()+")  ");

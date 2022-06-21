@@ -15,32 +15,115 @@
  */
 package org.workflowsim.scheduling;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.plaf.basic.BasicScrollPaneUI.VSBChangeListener;
+
 import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.Log;
+import org.cloudbus.cloudsim.core.CloudSim;
 import org.workflowsim.CondorVM;
+import org.workflowsim.Job;
 import org.workflowsim.WorkflowSimTags;
 
-/**
- * Static algorithm. Do not schedule at all and reply on Workflow Planner to set
- * the mapping relationship. But StaticSchedulingAlgorithm would check whether a
- * job has been assigned a VM in this stage (in case your implementation of
- * planning algorithm forgets it)
- *
- * @author Weiwei Chen
- * @since WorkflowSim Toolkit 1.0
- * @date Jun 17, 2013
- */
+//import sun.misc.VM;
+
 public class FuzzySchedulingAlgorithm extends BaseSchedulingAlgorithm {
 
     public FuzzySchedulingAlgorithm() {
         super();
     }
+    private final List<Boolean> hasChecked = new ArrayList<>();
 
     @Override
-    public void run() throws Exception {
+    public void run() {
+
+        int size = getCloudletList().size();
+        List<Cloudlet> cloudlets = getCloudletList();
+        hasChecked.clear();
+        for (int t = 0; t < size; t++) {
+            hasChecked.add(false);
+        }
+//        for (int i = 0; i < size; i++) 
+        while(!cloudlets.isEmpty()){
+            int minIndex = 0;
+            Cloudlet minCloudlet = null;
+            for (int j = 0; j < size; j++) {
+                Cloudlet cloudlet = (Cloudlet) cloudlets.get(j);
+                if (!hasChecked.get(j)) {
+                    minCloudlet = cloudlet;
+                    minIndex = j;
+                    break;
+                }
+            }
+            if (minCloudlet == null) {
+                break;
+            }
 
 
+            for (int j = 0; j < size; j++) {
+                Cloudlet cloudlet = (Cloudlet) cloudlets.get(j);
+                if (hasChecked.get(j)) {
+                    continue;
+                }
+                long length = cloudlet.getCloudletLength();
+                if (length < minCloudlet.getCloudletLength()) {
+                    minCloudlet = cloudlet;
+                    minIndex = j;
+                }
+            }
+            hasChecked.set(minIndex, true);
+
+//            int vmSize = getVmList().size();
+            Job job = (Job) minCloudlet;
+            List<CondorVM> vlist = getVmList();
+            List<CondorVM> schedulableVmList = new ArrayList<CondorVM>();
+            if(job.getoffloading() == -1){
+            	schedulableVmList.addAll(vlist);
+//            	System.out.println("No uninstall decision was made");
+            }
+            else{
+            	for(CondorVM vm : vlist){
+                	if(job.getoffloading() == vm.getHost().getDatacenter().getId())
+                		schedulableVmList.add(vm);
+                }
+			}
+//            System.out.print("  job"+job.getCloudletId()+"uninstall to"+CloudSim.getEntityName(job.getoffloading())+", The schedulable virtual machines are: ");
+//            for(CondorVM v2 : schedulableVmList)
+//            	System.out.print(v2.getId()+",");
+            int vmSize = schedulableVmList.size();
+            CondorVM firstIdleVm = null;//(CondorVM)getVmList().get(0);
+            for (int j = 0; j < vmSize; j++) {
+                CondorVM vm = schedulableVmList.get(j);
+                if (vm.getState() == WorkflowSimTags.VM_STATUS_IDLE) {
+                    firstIdleVm = vm;
+                    break;
+                }
+            }
+            if (firstIdleVm == null) {
+//                break;
+            	CondorVM fast = schedulableVmList.get(0);
+            	for(CondorVM vm : schedulableVmList){
+            		if(vm.getMips() > fast.getMips())
+            			fast = vm;
+            	}
+            	firstIdleVm = fast;
+            }
+            else{
+            for (int j = 0; j < vmSize; j++) {
+                CondorVM vm = schedulableVmList.get(j);
+                if ((vm.getState() == WorkflowSimTags.VM_STATUS_IDLE)
+                        && vm.getCurrentRequestedTotalMips() > firstIdleVm.getCurrentRequestedTotalMips()) {
+                    firstIdleVm = vm;
+                }
+            }
+            }
+            firstIdleVm.setState(WorkflowSimTags.VM_STATUS_BUSY);
+            minCloudlet.setVmId(firstIdleVm.getId());
+//            System.out.println("schedule to vm"+firstIdleVm.getId());
+            getScheduledList().add(minCloudlet);
+            cloudlets.remove(minCloudlet);
+            size = cloudlets.size();
+        }
     }
 }
