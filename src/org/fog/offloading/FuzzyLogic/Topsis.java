@@ -1,3 +1,5 @@
+package org.fog.offloading.FuzzyLogic;
+
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 
 import java.util.*;

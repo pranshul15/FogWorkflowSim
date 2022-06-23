@@ -1,3 +1,5 @@
+package org.fog.offloading.FuzzyLogic;
+
 import java.util.ArrayList;
 import java.util.TreeMap;
 

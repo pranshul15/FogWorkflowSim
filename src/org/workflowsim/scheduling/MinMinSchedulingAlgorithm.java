@@ -44,7 +44,7 @@ public class MinMinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
 
     @Override
     public void run() {
-
+    	System.out.println("\tAlgorithm Start: ");
         int size = getCloudletList().size();
         List<Cloudlet> cloudlets = getCloudletList();
         hasChecked.clear();
@@ -86,7 +86,7 @@ public class MinMinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
             List<CondorVM> schedulableVmList = new ArrayList<CondorVM>();
             if(job.getoffloading() == -1){
             	schedulableVmList.addAll(vlist);
-//            	System.out.println("No uninstall decision was made");
+//            	System.out.println("No offloading decision was made");
             }
             else{
             	for(CondorVM vm : vlist){
@@ -94,7 +94,8 @@ public class MinMinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
                 		schedulableVmList.add(vm);
                 }
 			}
-            System.out.print("  job"+job.getCloudletId()+"uninstall to"+CloudSim.getEntityName(job.getoffloading())+", The schedulable virtual machines are: ");
+            
+            System.out.print("  job"+job.getCloudletId()+" offload to "+CloudSim.getEntityName(job.getoffloading())+", The schedulable virtual machines are: ");
             for(CondorVM v2 : schedulableVmList)// printing line
             	System.out.print(v2.getId()+",");
             int vmSize = schedulableVmList.size();
@@ -131,5 +132,6 @@ public class MinMinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
             cloudlets.remove(minCloudlet);
             size = cloudlets.size();
         }
+        System.out.println("\tAlgorithm End");
     }
 }

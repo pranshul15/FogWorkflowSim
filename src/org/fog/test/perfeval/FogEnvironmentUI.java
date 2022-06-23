@@ -126,7 +126,7 @@ public class FogEnvironmentUI extends JFrame {
     		} catch (IOException e1) {
     			e1.printStackTrace();
     		}
-            Element root = dom.getRootElement();//文档根节点
+            Element root = dom.getRootElement();//document root node
             List<Element> list = root.getChildren();
             List<Element> hostList;
     		List<String> mipsList = new ArrayList<>();
@@ -450,7 +450,7 @@ public class FogEnvironmentUI extends JFrame {
 	public void updateMap(JTextField textField, String name){
 		List<String> list = new ArrayList<String>();
 		List<String> newlist = new ArrayList<String>();
-		String s = textField.getText().trim();//trim()方法用于去掉你可能误输入的空格号
+		String s = textField.getText().trim();//trim()method to remove spaces that you may have mistyped
 		int index = Integer.valueOf(textField.getName().substring(5));
 //		System.out.println("FogEnvironmentUI : Host-"+index);
 		list = NewDCHostMipsMap.get(name);

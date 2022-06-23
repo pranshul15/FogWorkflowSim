@@ -1,3 +1,5 @@
+package org.fog.offloading.FuzzyLogic;
+
 import java.text.DecimalFormat;
 
 class Config {

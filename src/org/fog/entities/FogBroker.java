@@ -29,7 +29,6 @@ import org.workflowsim.scheduling.MinMinSchedulingAlgorithm;
 import org.workflowsim.scheduling.PsoScheduling;
 import org.workflowsim.scheduling.RoundRobinSchedulingAlgorithm;
 import org.workflowsim.scheduling.StaticSchedulingAlgorithm;
-import org.workflowsim.scheduling.FuzzySchedulingAlgorithm;
 import org.workflowsim.utils.Parameters;
 import org.workflowsim.utils.Parameters.SchedulingAlgorithm;
 
@@ -220,9 +219,6 @@ public class FogBroker extends PowerDatacenterBroker{
             case ROUNDROBIN:
                 algorithm = new RoundRobinSchedulingAlgorithm();
                 break;
-            case FUZZY:
-            	algorithm = new FuzzySchedulingAlgorithm();
-            	break;
             default:
                 algorithm = new StaticSchedulingAlgorithm();
                 break;

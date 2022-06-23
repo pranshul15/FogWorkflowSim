@@ -1,3 +1,5 @@
+package org.fog.offloading.FuzzyLogic;
+
 public class Test {
 
     public void calculateAHP(){

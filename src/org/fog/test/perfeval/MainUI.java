@@ -115,7 +115,7 @@ import jxl.write.biff.RowsExceededException;
 
 @SuppressWarnings("serial")
 public class MainUI extends JFrame {
-	final static String[] algrithmStr = new String[]{"MINMIN","MAXMIN","FCFS","ROUNDROBIN","PSO","GA","FUZZY"};
+	final static String[] algrithmStr = new String[]{"MINMIN","MAXMIN","FCFS","ROUNDROBIN","PSO","GA"};
 	final static String[] objectiveStr = new String[]{"Time","Energy","Cost"};
 	final static String[] inputTypeStr = new String[]{"Montage","CyberShake","Epigenomics","Inspiral","Sipht"};
 	final static String[] nodeSizeStr = new String[]{};
@@ -173,7 +173,6 @@ public class MainUI extends JFrame {
 	private final JCheckBox chckbxRoundrobin = new JCheckBox("ROUNDROBIN");
 	private final JCheckBox chckbxGa = new JCheckBox("GA");
 	private final JCheckBox chckbxPso = new JCheckBox("PSO");
-	private final JCheckBox chckbxFuzzy = new JCheckBox("FUZZY");
 	static List<JCheckBox> CheckBoxList = new ArrayList<JCheckBox>();
 	private final JRadioButton rdbtnTime = new JRadioButton("Time",true);
 	private final JRadioButton rdbtnEnergy = new JRadioButton("Energy");
@@ -574,12 +573,6 @@ public class MainUI extends JFrame {
 		CheckBoxList.add(chckbxGa);
 		panel_2.add(chckbxGa);
 		
-		chckbxFuzzy.setFont(new Font("Consolas", Font.PLAIN, 12));
-		chckbxFuzzy.setBackground(Color.WHITE);
-		chckbxFuzzy.setBounds(154, 116, 60, 23);
-		CheckBoxList.add(chckbxFuzzy);
-		panel_2.add(chckbxFuzzy);
-		
 		rdbtnTime.setFont(new Font("Consolas", Font.PLAIN, 12));
 		rdbtnTime.setBackground(Color.WHITE);
 		rdbtnTime.setBounds(89, 144, 68, 23);
@@ -951,6 +944,7 @@ public class MainUI extends JFrame {
     					repaint();
     				}
 	    		}
+	    		System.out.println("Mobilenum was changed to "+mobileNum);
 	        }else if(e.getItemSelectable() == edgeNumCb) {
 	        		if(e.getStateChange() == ItemEvent.SELECTED){
 	        			Flag1 = true;
@@ -966,6 +960,7 @@ public class MainUI extends JFrame {
 	    					repaint();
 	    				}
 		    		}
+	        		System.out.println("fogServerNum is changed to "+fogServerNum);
 	        		
 	        	}else if(e.getItemSelectable() == cloudNumCb){
 	        		if(e.getStateChange() == ItemEvent.SELECTED){
@@ -982,6 +977,7 @@ public class MainUI extends JFrame {
 	    					repaint();
 	    				}	
 		    		}
+	        		System.out.println("cloudNumCb is changed to "+cloudNum);
 	        	}else if(e.getItemSelectable()==selectdisplay){
 	        		exresult.setEnabled(true);
 	        		String algorithm = (String) e.getItem();
@@ -1004,11 +1000,10 @@ public class MainUI extends JFrame {
 				boolean trace_flag = false; // mean trace events
 
 				CloudSim.init(num_user, calendar, trace_flag);
-
+				
 				String appId = "workflow"; // identifier of the application
-								
+
 				createFogDevices(1,appId);//(broker.getId(), appId);
-							
 				List<? extends Host> hostlist = new ArrayList<Host>();
 				int hostnum = 0;
 				for(FogDevice device : fogDevices){
@@ -1016,6 +1011,7 @@ public class MainUI extends JFrame {
 					hostlist.addAll(device.getHostList());
 				}
 				int vmNum = hostnum;//number of vms;
+				System.out.println("Number of VM: "+vmNum);
 				
 	            File daxFile = new File(daxPath);
 	            if (!daxFile.exists()) {
@@ -1067,16 +1063,16 @@ public class MainUI extends JFrame {
 	            else{
 	            	switch (StrategyCb.getSelectedItem().toString()) {
 	            	case "All-in-Fog":
-						wfEngine.getoffloadingEngine().setOffloadingStrategy(new OffloadingStrategyAllinFog());
+						wfEngine.getoffloadingEngine().setOffloadingStrategy(new OffloadingStrategyAllinFog(fogDevices));
 						break;
 	            	case "All-in-Cloud":
-						wfEngine.getoffloadingEngine().setOffloadingStrategy(new OffloadingStrategyAllinCloud());
+						wfEngine.getoffloadingEngine().setOffloadingStrategy(new OffloadingStrategyAllinCloud(fogDevices));
 						break;
 					case "Simple":
 						wfEngine.getoffloadingEngine().setOffloadingStrategy(new OffloadingStrategySimple());
 						break;
 					case "Fuzzy":
-						wfEngine.getoffloadingEngine().setOffloadingStrategy(new OffloadingStrategyFuzzy());
+						wfEngine.getoffloadingEngine().setOffloadingStrategy(new OffloadingStrategyFuzzy(fogDevices));
 						break;
 					default:
 						wfEngine.getoffloadingEngine().setOffloadingStrategy(null);
@@ -1108,9 +1104,9 @@ public class MainUI extends JFrame {
 	            for(FogDevice fogdevice:controller.getFogDevices()){
 	            	wfEngine.bindSchedulerDatacenter(fogdevice.getId(), 0);
 	            	list = fogdevice.getHostList();  //host on output device
-	            	System.out.println(fogdevice.getName()+": ");
+	            	System.out.println(fogdevice.getName()+": ");//fogdevice type
 	            	for (PowerHost host : list){
-	            		System.out.print(host.getId()+":Mips("+host.getTotalMips()+"),"+"cost("+host.getcostPerMips()+")  ");
+	            		System.out.print(host.getId()+":Mips("+host.getTotalMips()+"),"+"cost("+host.getcostPerMips()+")  ");//hosts
 	            	}
 	            	System.out.println();
 	            }
@@ -1159,6 +1155,8 @@ public class MainUI extends JFrame {
 				else
 					CostList.add(Double.valueOf(textField.getText()));
 			}
+//			System.out.println("GHzList: "+GHzList);
+//			System.out.println("CostList: "+CostList);
 			cloudNumCb.setSelectedItem(String.valueOf(GHzList.size()));
 			FogDevice cloud = createFogDevice("cloud", GHzList.size(), GHzList, CostList,
 					40000, 100, 10000, 0, ratePerMips, 16*103, 16*83.25,costPerMem,costPerStorage,costPerBw); // creates the fog device Cloud at the apex of the hierarchy with level=0

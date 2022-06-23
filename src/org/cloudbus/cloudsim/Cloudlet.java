@@ -26,8 +26,8 @@ import org.cloudbus.cloudsim.core.CloudSim;
 public class Cloudlet {
 	
 	/**
-	 * 用户id，指令长度，文件长度，输出长度，pe数量，cloudlet的id，cloudlet状态
-	 * 完成时间、开始时间等
+	 * User id, command length, file length, output length, number of pe, cloudlet id, cloudlet status
+	 * Completion time, start time, etc.
 	 */
 
 	/**
@@ -43,7 +43,7 @@ public class Cloudlet {
 
 	/**
 	 * The input file size of this Cloudlet before execution (unit: in byte). in byte = program +
-	 * input data size  程序长度+数据长度
+	 * input data size  program length + data length
 	 */
 	private final long cloudletFileSize;
 
@@ -99,7 +99,7 @@ public class Cloudlet {
 	// //////////////////////////////////////////
 	// Below are CONSTANTS attributes
 	/** The Cloudlet has been created and added to the CloudletList object.
-     * 关于cloudlet状态的变量
+     * Variables about cloudlet state
 	 *  */
 	public static final int CREATED = 0;
 
@@ -141,7 +141,7 @@ public class Cloudlet {
 	/** The accumulated bw cost. */
 	protected double accumulatedBwCost;
 
-	// Utilization 获得cup，内存和带宽的利用率
+	// Utilization Get cpu, memory and bandwidth utilization
 
 	/** The utilization of cpu model. */
 	private UtilizationModel utilizationModelCpu;
@@ -371,13 +371,13 @@ public class Cloudlet {
 
 	/**
 	 * Internal class that keeps track Cloudlet's movement in different CloudResources.
-     * 字段：
-     * 提交时间
-     * 在资源总运行时间
-     * 占用cpu时间
-     * 价格
-     * 目前完成度
-     * resource的id和name
+     * Field:
+     * submission time
+     * Total runtime on the resource
+     * Take up cpu time
+     * price
+     * current degree of completion
+     * The id and name of the resource
 	 */
 	public static class Resource {
 
@@ -496,7 +496,7 @@ public class Cloudlet {
 	}
 
 	/**
-     * 从提交到运行之间的等待时间
+     * Wait time between commit and run
 	 * Gets the waiting time of this cloudlet executed on a resource.
 	 * 
 	 * @return the waiting time
@@ -514,7 +514,7 @@ public class Cloudlet {
 	}
 
 	/**
-     * 设置类型和优先权
+     * Set Type and Priority
 	 * Sets the classType or priority of this Cloudlet for scheduling on a resource.
 	 * 
 	 * @param classType classType of this Cloudlet
@@ -593,7 +593,7 @@ public class Cloudlet {
 	}
 
 	/**
-     * 已经执行的长度
+     * length of execution
 	 * Gets the length of this Cloudlet that has been executed so far from the latest CloudResource.
 	 * This method is useful when trying to move this Cloudlet into different CloudResources or to
 	 * cancel it.
@@ -640,7 +640,7 @@ public class Cloudlet {
 	}
 
 	/**
-     * 设置目前已经执行的长度
+     * Set the length that has been executed so far
 	 * Sets the length of this Cloudlet that has been executed so far. This method is used by
 	 * ResCloudlet class when an application is decided to cancel or to move this Cloudlet into
 	 * different CloudResources.
@@ -884,7 +884,7 @@ public class Cloudlet {
 	}
 
 	/**
-     * 以字符串形式返回cloudlet状态
+     * Returns the cloudlet state as a string
 	 * Gets the status code of this Cloudlet.
 	 * 
 	 * @return the status code of this Cloudlet
@@ -1058,7 +1058,7 @@ public class Cloudlet {
 	}
 
 	/**     
-	 * * 某个资源所用的cpu时间
+	 * * CPU time used by a resource
 	 * Gets the total execution time of this Cloudlet in a given CloudResource ID.
 	 * 
 	 * @param resId a CloudResource entity ID
@@ -1076,7 +1076,7 @@ public class Cloudlet {
 	}
 
 	/**
-     * 某个资源的价格
+     * the price of a resource
 	 * Gets the cost running this Cloudlet in a given CloudResource ID.
 	 * 
 	 * @param resId a CloudResource entity ID
@@ -1093,7 +1093,7 @@ public class Cloudlet {
 	}
 
 	/**
-     * 给定的resource已经执行的cloudlet的长度
+     * The length of the cloudlet that has been executed by the given resource
 	 * Gets the length of this Cloudlet that has been executed so far in a given CloudResource ID.
 	 * This method is useful when trying to move this Cloudlet into different CloudResources or to
 	 * cancel it.

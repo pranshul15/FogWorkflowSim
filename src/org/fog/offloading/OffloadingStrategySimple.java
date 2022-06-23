@@ -24,7 +24,7 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 	public OffloadingStrategySimple(List<FogDevice> fogdevices) {
 		super(fogdevices);
 		// TODO Auto-generated constructor stub
-		deadline = getOffloadingEngine().getWorkflowEngine().DeadLine;
+//		deadline = getOffloadingEngine().getWorkflowEngine().DeadLine;
 		fileToDatacenter = new HashMap<String, List<Integer>>();
 	}
 	public OffloadingStrategySimple() {
@@ -60,7 +60,7 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 //                System.out.println("energy2 = "+powerModel.getStaticPower() * job.getCloudletLength() / fd.getHost().getTotalMips() + " + "
 //                                                  +powerModel.getSendPower() +" * "+(getJobInputFileSize(fd, job) + getJobOutputFileSize(job)) * 8 /100 / LAN_Bandwidth);
 			}
-			else{//Do not uninstall
+			else{//Do not offload
 				time3 = job.getCloudletLength() / fd.getAverageMips();
 				energy3 = powerModel.getMaxPower() * job.getCloudletLength() / fd.getAverageMips();
 			}
@@ -69,7 +69,7 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 //		System.out.println(energy1+",  "+energy2+",  "+energy3);
 		if(deadline < Math.min(time1, time2)){//do not meet the time constraints
 			System.out.println("Unloading does not meet time constraints");
-			job.setoffloading(getmobile().getId());//Do not uninstall
+			job.setoffloading(getmobile().getId());//Do not offload
 		}
 		else if(deadline > Math.max(time1, time2)){//meet the time constraints
 			if(Math.min(energy3, Math.min(energy1, energy2)) == energy1){
@@ -82,7 +82,7 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 			}
 			else{
 				System.out.println("meet the time constraints，but not unloading the minimum energy consumption");
-				job.setoffloading(getmobile().getId());//Do not uninstall
+				job.setoffloading(getmobile().getId());//Do not offload
 			}
 		}
 		else{//deadline is between time1 and time2
@@ -96,11 +96,11 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 			}
 			else{
 				System.out.println("There is a time constraint that is satisfied，but not unloading the minimum energy consumption");
-				job.setoffloading(getmobile().getId());//Do not uninstall
+				job.setoffloading(getmobile().getId());//Do not offload
 			}
 		}
 //		if(deadline < Math.min(time1, time2))
-//			job.setoffloading(getmobile().getId());//Do not uninstall
+//			job.setoffloading(getmobile().getId());//Do not offload
 //		else{
 //			if(time1 < time2){
 //				job.setoffloading(getcloud().getId());//Offload to cloud
@@ -111,7 +111,7 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 //				addFileToDatacenter(getFogNode(), job);
 //			}
 //		}
-		System.out.println("job"+job.getCloudletId()+"Uninstall decision results: "+job.getoffloading()+":"+CloudSim.getEntityName(job.getoffloading()));//Output unloading decision results
+		System.out.println("job"+job.getCloudletId()+"offload decision results: "+job.getoffloading()+":"+CloudSim.getEntityName(job.getoffloading()));//Output unloading decision results
 		return time3;
 	}
 	
@@ -148,7 +148,7 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 //                System.out.println("energy2 = "+powerModel.getStaticPower() * job.getCloudletLength() / fd.getHost().getTotalMips() + " + "
 //                                                  +powerModel.getSendPower() +" * "+(getJobInputFileSize(fd, job) + getJobOutputFileSize(job)) * 8 /100 / LAN_Bandwidth);
 			}
-			else{//Do not uninstall
+			else{//Do not offload
 				time3 = job.getCloudletLength() / fd.getAverageMips();
 				energy3 = powerModel.getMaxPower() * job.getCloudletLength() / fd.getAverageMips();
 			}
@@ -157,7 +157,7 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 //		System.out.println(energy1+",  "+energy2+",  "+energy3);
 		if(deadline < Math.min(time1, time2)){//do not meet the time constraints
 			System.out.println("Unloading does not meet time constraints");
-			job.setoffloading(getmobile().getId());//Do not uninstall
+			job.setoffloading(getmobile().getId());//Do not offload
 		}
 		else if(deadline > Math.max(time1, time2)){//meet the time constraints
 			if(Math.min(energy3, Math.min(energy1, energy2)) == energy1){
@@ -172,7 +172,7 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 			}
 			else{
 				System.out.println("meet the time constraints，but not unloading the minimum energy consumption");
-				job.setoffloading(getmobile().getId());//Do not uninstall
+				job.setoffloading(getmobile().getId());//Do not offload
 			}
 		}
 		else{//deadline is between time1 and time2
@@ -188,11 +188,11 @@ public class OffloadingStrategySimple extends OffloadingStrategy{
 			}
 			else{
 				System.out.println("There is a time constraint that is satisfied，but not unloading the minimum energy consumption");
-				job.setoffloading(getmobile().getId());//Do not uninstall
+				job.setoffloading(getmobile().getId());//Do not offload
 			}
 		}
 //		if(deadline < Math.min(time1, time2))
-//			job.setoffloading(getmobile().getId());//Do not uninstall
+//			job.setoffloading(getmobile().getId());//Do not offload
 //		else{
 //			if(time1 < time2){
 //				job.setoffloading(getcloud().getId());//Offload to cloud

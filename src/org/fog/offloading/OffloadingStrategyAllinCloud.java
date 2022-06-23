@@ -17,6 +17,7 @@ public class OffloadingStrategyAllinCloud extends OffloadingStrategy{
 
 	public double SelectDatacenter(Job job, double deadline) {
 		// TODO Auto-generated method stub
+		System.out.println("\t\toffloading " + job.getCloudletId() + " " + job.getCloudletLength());
 		job.setoffloading(getcloud().getId());
 		return 0;
 	}

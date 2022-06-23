@@ -1,3 +1,5 @@
+package org.fog.offloading.FuzzyLogic;
+
 public enum Fuzzy {
     // A triangular fuzzy number A is a fuzzy number with piecewise linear membership function
     // performance ratings and weights are evaluated with linguistic terms

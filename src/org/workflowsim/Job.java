@@ -61,7 +61,7 @@ public class Job extends Task {
         super(jobId, jobLength);
         this.taskList = new ArrayList<>();
         setProcessingCost(0.0);
-        setoffloading(-1);//-1表示未进行卸载决策
+        setoffloading(-1);//-1 means no offloading decision was made
         setInputsize(0);
         setOutputsize(0);
     }
