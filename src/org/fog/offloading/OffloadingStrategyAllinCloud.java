@@ -18,6 +18,11 @@ public class OffloadingStrategyAllinCloud extends OffloadingStrategy{
 	public double SelectDatacenter(Job job, double deadline) {
 		// TODO Auto-generated method stub
 		System.out.println("\t\toffloading " + job.getCloudletId() + " " + job.getCloudletLength());
+		for(FogDevice fogdevice : getFogDeviceLists()) {
+			System.out.println("\t\t\t " + fogdevice.getName() + " " + fogdevice.getAverageMips() + " "
+					+ fogdevice.getUplinkBandwidth() + " " + fogdevice.getDownlinkBandwidth() + " " + 
+					fogdevice.getUplinkLatency() + " " + fogdevice.getRatePerMips());
+		}
 		job.setoffloading(getcloud().getId());
 		return 0;
 	}

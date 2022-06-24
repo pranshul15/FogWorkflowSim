@@ -14,7 +14,7 @@ class Topsis {
         availableSites = new TreeMap<>();
     }
 
-    void start(){
+    String start(){
 
         Profiler p = new Profiler();
         availableSites = p.start();
@@ -29,12 +29,14 @@ class Topsis {
 
         TreeMap<Double, String> ccStar = calculateRelativeCloseness(idealDistances, antiIdealDistances);
 
-        System.out.println("**********************************");
-        System.out.println("Final Ranking:");
-
+//        System.out.println("**********************************");
+//        System.out.println("Final Ranking:");
+//
         for (Map.Entry<Double, String> entry: ccStar.entrySet()){
-            System.out.println(entry.getValue() + ": " + Config.df.format(entry.getKey()));
+//            System.out.println(entry.getValue() + ": " + Config.df.format(entry.getKey()));
+        	return entry.getValue();
         }
+        return "";
     }
 
     /**
@@ -46,7 +48,7 @@ class Topsis {
 
         for (Map.Entry<String,ArrayList<Fuzzy>> entry: availableSites.entrySet()) {
 
-            System.out.println(entry);
+//            System.out.println(entry);
 
             ArrayList<Double> fuzzyMatrix = new ArrayList<>();
 
@@ -59,7 +61,7 @@ class Topsis {
             sitesMatrix.put(entry.getKey(), fuzzyMatrix);
         }
 
-        System.out.println("unweighted fuzzy values: " + sitesMatrix);
+//        System.out.println("unweighted fuzzy values: " + sitesMatrix);
 
 
         return sitesMatrix;
@@ -70,7 +72,8 @@ class Topsis {
      * @param sitesMatrix the map of the nodes with their numerical fuzzy values
      * @return the normalised fuzzy value matrix
      */
-    private TreeMap<String, ArrayList<Double>> calculateNormalisedFuzzyMatrix(TreeMap<String, ArrayList<Double>> sitesMatrix) {
+    @SuppressWarnings("unused")
+	private TreeMap<String, ArrayList<Double>> calculateNormalisedFuzzyMatrix(TreeMap<String, ArrayList<Double>> sitesMatrix) {
 
         TreeMap<String, ArrayList<Double>> normalisedMatrix = new TreeMap<>();
 
@@ -83,7 +86,7 @@ class Topsis {
             }
         }
 
-        System.out.println("cj is: " + cj);
+//        System.out.println("cj is: " + cj);
 
         for (Map.Entry<String,ArrayList<Double>> entry: sitesMatrix.entrySet()) {
             for (int i = 0; i < entry.getValue().size(); i = i+3) {
@@ -91,7 +94,7 @@ class Topsis {
             }
         }
 
-        System.out.println("aj is: " + aj);
+//        System.out.println("aj is: " + aj);
 
         for (Map.Entry<String,ArrayList<Double>> entry: sitesMatrix.entrySet()) {
 
@@ -141,7 +144,7 @@ class Topsis {
             normalisedMatrix.put(entry.getKey(), rij);
         }
 
-        System.out.println("normalised fuzzy values: " + normalisedMatrix);
+//        System.out.println("normalised fuzzy values: " + normalisedMatrix);
 
         return normalisedMatrix;
     }
@@ -168,19 +171,19 @@ class Topsis {
             normalisedWeightedFuzzyMatrix.put(entry.getKey(), weightedMatrix);
         }
 
-        System.out.println("weighted fuzzy values: ");
+//        System.out.println("weighted fuzzy values: ");
 
         for (Map.Entry<String, ArrayList<Double>> entry: normalisedWeightedFuzzyMatrix.entrySet()){
             System.out.print(entry.getKey() + ": ");
             for (int j=0; j< entry.getValue().size(); j++) {
                 Double d = entry.getValue().get(j);
                 if (j%3 == 0) {
-                    System.out.println();
+//                    System.out.println();
                 }
-                System.out.print(Config.df.format(d) + ", ");
+//                System.out.print(Config.df.format(d) + ", ");
             }
 
-            System.out.println();
+//            System.out.println();
         }
 
         return normalisedWeightedFuzzyMatrix;
@@ -230,8 +233,8 @@ class Topsis {
             }
 
             results.put(entry.getKey(), dValue);
-            System.out.print(ideal? "D+": "D-");
-            System.out.println(" for " + entry.getKey() + " is: " + Config.df.format(dValue));
+//            System.out.print(ideal? "D+": "D-");
+//            System.out.println(" for " + entry.getKey() + " is: " + Config.df.format(dValue));
         }
 
         return results;

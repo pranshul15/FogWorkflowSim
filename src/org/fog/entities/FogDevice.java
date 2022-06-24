@@ -309,9 +309,6 @@ public class FogDevice extends PowerDatacenter {
 		checkCloudletCompletion();
 
 		/** Remove completed VMs **/
-		/**
-		 * Change made by HARSHIT GUPTA
-		 */
 		/*for (PowerHost host : this.<PowerHost> getHostList()) {
 			for (Vm vm : host.getCompletedVms()) {
 				getVmAllocationPolicy().deallocateHostForVm(vm);

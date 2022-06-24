@@ -44,7 +44,6 @@ public class MinMinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
 
     @Override
     public void run() {
-    	System.out.println("\tAlgorithm Start: ");
         int size = getCloudletList().size();
         List<Cloudlet> cloudlets = getCloudletList();
         hasChecked.clear();
@@ -95,9 +94,9 @@ public class MinMinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
                 }
 			}
             
-            System.out.print("  job"+job.getCloudletId()+" offload to "+CloudSim.getEntityName(job.getoffloading())+", The schedulable virtual machines are: ");
-            for(CondorVM v2 : schedulableVmList)// printing line
-            	System.out.print(v2.getId()+",");
+//            System.out.print("  job"+job.getCloudletId()+" offload to "+CloudSim.getEntityName(job.getoffloading())+", The schedulable virtual machines are: ");
+//            for(CondorVM v2 : schedulableVmList)// printing line
+//            	System.out.print(v2.getId()+",");
             int vmSize = schedulableVmList.size();
             CondorVM firstIdleVm = null;//(CondorVM)getVmList().get(0);
             for (int j = 0; j < vmSize; j++) {
@@ -132,6 +131,5 @@ public class MinMinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
             cloudlets.remove(minCloudlet);
             size = cloudlets.size();
         }
-        System.out.println("\tAlgorithm End");
     }
 }

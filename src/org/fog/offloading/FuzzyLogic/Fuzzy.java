@@ -6,7 +6,7 @@ public enum Fuzzy {
     // The linguistic weights for presenting the importance of criteria are very low (VL), low (L), medium (M), high (H) and very high (VH)
     VERY_LOW(new double[] {0.0, 0.0, 0.25}),
     LOW(new double[] {0.0, 0.25, 0.50}),
-    GOOD(new double[] {0.25, 0.50, 0.75}),
+    AVERAGE(new double[] {0.25, 0.50, 0.75}),
     HIGH(new double[] {0.50, 0.75, 1.0}),
     VERY_HIGH(new double[] {0.75, 1.0, 1.0});
 

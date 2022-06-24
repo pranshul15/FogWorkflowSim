@@ -69,13 +69,13 @@ public class DatacenterCharacteristics {
 	/** The vmm. */
 	private String vmm;
 
-	/** The cost per mem. */
+	/** The cost per memory. */
 	private double costPerMem;
 
 	/** The cost per storage. */
 	private double costPerStorage;
 
-	/** The cost per bw. */
+	/** The cost per bandwidth. */
 	private double costPerBw;
 
 	/**
