@@ -33,9 +33,13 @@ class Topsis {
 //        System.out.println("Final Ranking:");
 //
         for (Map.Entry<Double, String> entry: ccStar.entrySet()){
-//            System.out.println(entry.getValue() + ": " + Config.df.format(entry.getKey()));
-        	return entry.getValue();
+            System.out.println(entry.getValue() + ": " + Config.df.format(entry.getKey()));
+//        	return entry.getValue();
         }
+        for (Map.Entry<Double, String> entry: ccStar.entrySet()){
+//          System.out.println(entry.getValue() + ": " + Config.df.format(entry.getKey()));
+      	return entry.getValue();
+      }
         return "";
     }
 

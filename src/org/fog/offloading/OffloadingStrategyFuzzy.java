@@ -28,8 +28,15 @@ public class OffloadingStrategyFuzzy extends OffloadingStrategy{
 		long taskLength = job.getCloudletLength();
 		List<FogDevice> fogdevices = getFogDeviceLists();
 		String requiredDataCenter = AHP_TopsisCalculator.getRequiredDatacenter(fogdevices,deadline,taskLength);
-		System.out.println(requiredDataCenter);
-		job.setoffloading(getcloud().getId());
+		if(requiredDataCenter.equals("Cloud")) {			
+			job.setoffloading(getcloud().getId());
+		}
+		else if(requiredDataCenter.equals("Fog Node")) {
+			job.setoffloading(getFogNode().getId());
+		}
+		else {
+			job.setoffloading(getmobile().getId());
+		}
 		return 0;
 	}
 	

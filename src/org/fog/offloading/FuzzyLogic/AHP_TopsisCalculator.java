@@ -29,10 +29,10 @@ public class AHP_TopsisCalculator {
 	}
 	
 	private static Fuzzy getFuzzyDeadline(double deadline) {
-		if(deadline > 1) return Fuzzy.VERY_HIGH;
-		else if(deadline > 0.7) return Fuzzy.HIGH;
-		else if(deadline > 0.3) return Fuzzy.AVERAGE;
-		else if(deadline > 0.1) return Fuzzy.LOW;
+		if(deadline > 500) return Fuzzy.VERY_HIGH;
+		else if(deadline > 350) return Fuzzy.HIGH;
+		else if(deadline > 200) return Fuzzy.AVERAGE;
+		else if(deadline > 50) return Fuzzy.LOW;
 		return Fuzzy.VERY_LOW;
 	}
 	
@@ -53,7 +53,7 @@ public class AHP_TopsisCalculator {
         for(FogDevice fogdevice:fogDevices) {
         	String fogdeviceName = fogdevice.getName();
         	double fogdeviceAverageMips = fogdevice.getAverageMips();
-        	double fogdeviceBw = fogdevice.getDownlinkBandwidth() + fogdevice.getUplinkBandwidth();
+        	double fogdeviceBw = fogdevice.getUplinkBandwidth();
         	double fogdeviceCostPerMips = fogdevice.getRatePerMips();
         	if(fogdeviceName.equals("cloud")) {
 //        		Config.bandwidth[0] = getFuzzyBw(fogdeviceBw);

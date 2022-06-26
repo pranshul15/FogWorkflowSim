@@ -23,15 +23,15 @@ class Config {
     static Fuzzy CostPerMips[] = new Fuzzy[3];
     // AHP criteria weights in respect to each other
     static final Double NETWORKBANDWIDTH_CPUSPEED = 1.0;
-    static final Double NETWORKBANDWIDTH_TASKLENGTH = 5.0;
-    static final Double NETWORKBANDWIDTH_DEADLINE = 7.0;
-    static final Double NETWORKBANDWIDTH_COST = 9.0;
-    static final Double CPUSPEED_TASKLENGTH = 5.0;
-    static final Double CPUSPEED_DEADLINE = 6.0;
-    static final Double CPUSPEED_COST = 8.0;
-    static final Double TASKLENGTH_DEADLINE = 3.0;
-    static final Double TASKLENGTH_COST = 3.0;
-    static final Double DEADLINE_COST = 2.0;
+    static final Double NETWORKBANDWIDTH_TASKLENGTH = 1.0;
+    static final Double NETWORKBANDWIDTH_DEADLINE = 1.0;
+    static final Double NETWORKBANDWIDTH_COST = 1.0;
+    static final Double CPUSPEED_TASKLENGTH = 1.0;
+    static final Double CPUSPEED_DEADLINE = 1.0;
+    static final Double CPUSPEED_COST = 1.0;
+    static final Double TASKLENGTH_DEADLINE = 1.0;
+    static final Double TASKLENGTH_COST = 1.0;
+    static final Double DEADLINE_COST = 1.0;
     
     // The following values are obtained in profiling stage prior to offloading
     // Here, we just use static fuzzy values for each alternative
