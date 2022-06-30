@@ -20,7 +20,10 @@ public class OffloadingEngine extends SimEntity{
 	 * Current time
 	 */
 	public double offloadingTime;
-	
+	public static long totalTasklength;
+	public static long tasklengthOffloadedToFog;
+	public static long tasklengthOffloadedToEnd;
+	static public long tasklengthOffloadedToCloud;
 	/**
 	 * The Energy of mobile
 	 */
@@ -45,7 +48,7 @@ public class OffloadingEngine extends SimEntity{
 		setjobList(list);
 		long startoffloading = System.currentTimeMillis();
 		getOffloadingStrategy().BeforeOffloading(DeadLine);
-		double sum = 0;
+		long sum = 0;
 		for(Job job : list){
 //			for(FileItem file : job.getFileList()){
 //				if(file.getType() == FileType.INPUT)
@@ -54,7 +57,11 @@ public class OffloadingEngine extends SimEntity{
 			sum += job.getCloudletLength();
 		}
 		System.out.println(sum);
+		setTotalTasklength(sum);
 		double time = 0;
+		tasklengthOffloadedToFog = 0;
+		tasklengthOffloadedToCloud = 0;
+		tasklengthOffloadedToEnd = 0;
 		if(getOffloadingStrategy() != null){
 			for(Job job : list){
 				double deadline = DeadLine;
@@ -117,4 +124,10 @@ public class OffloadingEngine extends SimEntity{
 		// TODO Auto-generated method stub
 		System.out.println(getName()+" is shutting down...");
 	}
+	
+	public void setTotalTasklength(long tasklength) {
+		totalTasklength = tasklength;
+	}
+	
+	
 }

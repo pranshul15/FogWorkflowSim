@@ -1,5 +1,5 @@
 package org.fog.test.perfeval;
-
+//import org.fog.offloading.FuzzyLogic.Config;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
@@ -78,6 +79,7 @@ import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.offloading.OffloadingStrategyAllinCloud;
 import org.fog.offloading.OffloadingStrategyAllinFog;
 import org.fog.offloading.OffloadingStrategySimple;
+import org.fog.offloading.FuzzyLogic.Config;
 import org.fog.offloading.OffloadingStrategyFuzzy;
 import org.fog.utils.FogLinearPowerModel;
 import org.fog.utils.FogUtils;
@@ -115,6 +117,7 @@ import jxl.write.biff.RowsExceededException;
 
 @SuppressWarnings("serial")
 public class MainUI extends JFrame {
+//	double parameter = 1.0;
 	final static String[] algrithmStr = new String[]{"MINMIN","MAXMIN","FCFS","ROUNDROBIN","PSO","GA"};
 	final static String[] objectiveStr = new String[]{"Time","Energy","Cost"};
 	final static String[] inputTypeStr = new String[]{"Montage","CyberShake","Epigenomics","Inspiral","Sipht"};
@@ -734,6 +737,8 @@ public class MainUI extends JFrame {
 	        public void actionPerformed(ActionEvent e)  
 	        {
 	            if(e.getSource() == stnBtn){
+//	            	Config.setParameter(parameter);
+//	            	parameter += 2.0;
 	            	selectdisplay.removeAllItems();
 	            	outputs.clear();
 	            	record.clear();

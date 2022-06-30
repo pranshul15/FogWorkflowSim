@@ -2,7 +2,7 @@ package org.fog.offloading.FuzzyLogic;
 
 import java.text.DecimalFormat;
 
-class Config {
+public class Config {
 
     // Set your alternatives here
     static String[] alternatives = new String[]{"End Device", "Fog Node", "Cloud"};
@@ -16,22 +16,22 @@ class Config {
 
     static Double[] ahpWeights = new Double[Config.criteria.length];
 
-    static Fuzzy bandwidth[] = new Fuzzy[3];
-    static Fuzzy CPUspeed[] = new Fuzzy[3];
+    static Fuzzy bandwidth[] = new Fuzzy[] {Fuzzy.VERY_LOW,Fuzzy.AVERAGE,Fuzzy.HIGH};
+    static Fuzzy CPUspeed[] = new Fuzzy[] {Fuzzy.HIGH,Fuzzy.HIGH,Fuzzy.LOW};
     static Fuzzy taskLength[] = new Fuzzy[3];
-    static Fuzzy deadline[] = new Fuzzy[3];
-    static Fuzzy CostPerMips[] = new Fuzzy[3];
+    static Fuzzy deadline[] = new Fuzzy[] {Fuzzy.HIGH,Fuzzy.AVERAGE,Fuzzy.LOW};
+    static Fuzzy CostPerMips[] = new Fuzzy[] {Fuzzy.HIGH,Fuzzy.HIGH,Fuzzy.AVERAGE};
     // AHP criteria weights in respect to each other
-    static final Double NETWORKBANDWIDTH_CPUSPEED = 1.0;
-    static final Double NETWORKBANDWIDTH_TASKLENGTH = 1.0;
-    static final Double NETWORKBANDWIDTH_DEADLINE = 1.0;
-    static final Double NETWORKBANDWIDTH_COST = 1.0;
-    static final Double CPUSPEED_TASKLENGTH = 1.0;
-    static final Double CPUSPEED_DEADLINE = 1.0;
-    static final Double CPUSPEED_COST = 1.0;
-    static final Double TASKLENGTH_DEADLINE = 1.0;
-    static final Double TASKLENGTH_COST = 1.0;
-    static final Double DEADLINE_COST = 1.0;
+    static Double NETWORKBANDWIDTH_CPUSPEED = 1.0/2.0;
+    static Double NETWORKBANDWIDTH_TASKLENGTH = 1.0/6.0;
+    static Double NETWORKBANDWIDTH_DEADLINE = 1.0;
+    static Double NETWORKBANDWIDTH_COST = 1.0;
+    static Double CPUSPEED_TASKLENGTH = 1.0/2.0;
+    static Double CPUSPEED_DEADLINE = 1.0;
+    static Double CPUSPEED_COST = 1.0;
+    static Double TASKLENGTH_DEADLINE = 1.0;
+    static Double TASKLENGTH_COST = 3.0;
+    static Double DEADLINE_COST = 3.0;
     
     // The following values are obtained in profiling stage prior to offloading
     // Here, we just use static fuzzy values for each alternative
@@ -42,5 +42,4 @@ class Config {
 
     // Number of decimal points for float number formatting
     static DecimalFormat df = new DecimalFormat("0.0000");
-
 }

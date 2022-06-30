@@ -126,7 +126,7 @@ public class MinMinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
             }
             firstIdleVm.setState(WorkflowSimTags.VM_STATUS_BUSY);
             minCloudlet.setVmId(firstIdleVm.getId());
-            System.out.println("schedule to vm"+firstIdleVm.getId());//printing line
+//            System.out.println("schedule to vm"+firstIdleVm.getId());//printing line
             getScheduledList().add(minCloudlet);
             cloudlets.remove(minCloudlet);
             size = cloudlets.size();
