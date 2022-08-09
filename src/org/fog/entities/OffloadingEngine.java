@@ -63,7 +63,7 @@ public class OffloadingEngine extends SimEntity{
 		tasklengthOffloadedToCloud = 0;
 		tasklengthOffloadedToEnd = 0;
 		if(getOffloadingStrategy() != null){
-			for(Job job : list){
+			for(Job job : list) {
 				double deadline = DeadLine;
 //				double deadline = job.getCloudletLength() / sum * DeadLine;// * 10;
 				time += getOffloadingStrategy().SelectDatacenter(job, deadline);

@@ -81,6 +81,8 @@ import org.fog.offloading.OffloadingStrategyAllinFog;
 import org.fog.offloading.OffloadingStrategySimple;
 import org.fog.offloading.FuzzyLogic.Config;
 import org.fog.offloading.OffloadingStrategyFuzzy;
+import org.fog.offloading.OffloadingStrategyFuzzy2;
+import org.fog.offloading.OffloadingStrategyFuzzyOff;
 import org.fog.utils.FogLinearPowerModel;
 import org.fog.utils.FogUtils;
 import org.workflowsim.CondorVM;
@@ -125,7 +127,7 @@ public class MainUI extends JFrame {
 	final static String[] cloudNumStr = new String[]{null,"1","2","3","4","5"};
 	final static String[] edgeNumStr = new String[]{null,"1","2","3","4","5"};
 	final static String[] mobileNumStr = new String[]{null,"1","2","3","4","5"};
-	final static String[] strategyStr = new String[]{null,"All-in-Fog","All-in-Cloud","Simple","Fuzzy"};
+	final static String[] strategyStr = new String[]{null,"All-in-Fog","All-in-Cloud","Simple","Fuzzy","Fuzzy2","FuzzyOff"};
 	final static String[] columnNames = {"Job ID", "Task ID", "STATUS", "Data center ID", "VM ID", 
 			"Time","Start Time","Finish Time","Depth","Cost","Parents"};//header element
 	private static JComboBox inputTypeCb = new JComboBox(inputTypeStr);
@@ -1031,7 +1033,7 @@ public class MainUI extends JFrame {
 	             */
 	            Parameters.SchedulingAlgorithm sch_method =Parameters.SchedulingAlgorithm.valueOf(scheduler_method);
 	            Parameters.Optimization opt_objective = Parameters.Optimization.valueOf(optimize_objective);
-	            Parameters.PlanningAlgorithm pln_method = Parameters.PlanningAlgorithm.INVALID;
+	            Parameters.PlanningAlgorithm pln_method = Parameters.PlanningAlgorithm.HEFT;
 	            ReplicaCatalog.FileSystem file_system = ReplicaCatalog.FileSystem.SHARED;
 	            /**
 	             * No overheads
@@ -1078,6 +1080,12 @@ public class MainUI extends JFrame {
 						break;
 					case "Fuzzy":
 						wfEngine.getoffloadingEngine().setOffloadingStrategy(new OffloadingStrategyFuzzy(fogDevices));
+						break;
+					case "Fuzzy2":
+						wfEngine.getoffloadingEngine().setOffloadingStrategy(new OffloadingStrategyFuzzy2(fogDevices));
+						break;
+					case "FuzzyOff":
+						wfEngine.getoffloadingEngine().setOffloadingStrategy(new OffloadingStrategyFuzzyOff(fogDevices));
 						break;
 					default:
 						wfEngine.getoffloadingEngine().setOffloadingStrategy(null);
